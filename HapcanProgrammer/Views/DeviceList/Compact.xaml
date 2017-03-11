@@ -10,15 +10,9 @@
         <ListView x:Name="Devices" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <!--<Button Content="Remove"
-                                cal:Message.Attach="Remove($dataContext)" />-->
-                        <TextBlock Text="{Binding Description}" />
-                        <TextBlock Text="{Binding SerialNumber}" />
-                        <TextBlock Text="{Binding ApplicationType}" Margin="10,0,0,0" />
-                        <TextBlock Text="{Binding ModuleNumber}" Margin="20,0,0,0" />
-                        <TextBlock Text="{Binding GroupNumber}" Margin="10,0,0,0" />
-                    </StackPanel>
+                    <TextBlock Foreground="{DynamicResource Accent2Brush}" >
+                        <Run Text="{Binding Description}" Foreground="{DynamicResource TextColor}" /> (<Run Text="{Binding ModuleNumber}" />, <Run Text="{Binding GroupNumber}" />)
+                    </TextBlock>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListView>

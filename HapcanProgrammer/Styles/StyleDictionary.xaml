@@ -4,7 +4,7 @@
     xmlns:l="clr-namespace:HapcanProgrammer.Styles"
 >
 
-    <SolidColorBrush x:Key="TextColor" Color="#FFB2B2B2"/>
+    <SolidColorBrush x:Key="TextColor" Color="#FFCBCACA"/>
     <SolidColorBrush x:Key="Background2" Color="#FF585E64"/>
     <Color x:Key="BackgroundColor">#FF252525</Color>
 

@@ -14,7 +14,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock Text="{Binding}" />
+                            <TextBlock Text="{Binding}" Foreground="{DynamicResource TextColor}" />
                             <TextBlock Text="{Binding Frame}" Foreground="{DynamicResource Accent2Brush}" FontSize="10"/>
 
                         </StackPanel>

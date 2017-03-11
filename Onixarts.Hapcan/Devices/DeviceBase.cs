@@ -37,6 +37,11 @@ namespace Onixarts.Hapcan.Devices
         //private int _descriptionFrameIndex = 0;
         //private Int16 _firmwareVersion;
 
+        public DeviceBase()
+        {
+            description1 = "<unknown";
+            description2 = ">";
+        }
 
         //public DeviceType Type
         //{
