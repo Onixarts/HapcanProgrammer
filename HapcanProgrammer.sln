@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan.IR.UNIV_3_5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan.Relays.UNIV_3_2", "plugins\Onixarts.Hapcan.Relays.UNIV_3_2\Onixarts.Hapcan.Relays.UNIV_3_2.csproj", "{8FA75FA8-55FE-4385-B4FD-B7E7DDD864E7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{01F3C5AF-2EE8-45F4-881C-3F39CE55F593}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{36111CFF-0AF8-4B71-88D2-B6C40EC7625B} = {01F3C5AF-2EE8-45F4-881C-3F39CE55F593}
+		{A407A439-6E75-426D-903E-BC02FD55C380} = {01F3C5AF-2EE8-45F4-881C-3F39CE55F593}
+		{6C219430-1822-4454-8C47-F267A29D0149} = {01F3C5AF-2EE8-45F4-881C-3F39CE55F593}
+		{A2048AA2-FDD5-4907-888D-CF6632DFD7B6} = {01F3C5AF-2EE8-45F4-881C-3F39CE55F593}
+		{8FA75FA8-55FE-4385-B4FD-B7E7DDD864E7} = {01F3C5AF-2EE8-45F4-881C-3F39CE55F593}
 	EndGlobalSection
 EndGlobal
