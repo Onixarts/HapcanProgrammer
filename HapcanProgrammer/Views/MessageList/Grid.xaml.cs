@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HapcanProgrammer
+namespace HapcanProgrammer.Views.MessageList
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Grid.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Grid : UserControl
     {
-        public MainWindow()
+        public Grid()
         {
             InitializeComponent();
         }

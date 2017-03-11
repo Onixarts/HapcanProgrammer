@@ -1,0 +1,89 @@
+<Window x:Class="HapcanProgrammer.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:cal="http://www.caliburnproject.org" Width="1188" Height="594" 
+        xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+        
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
+        mc:Ignorable="d"   
+        xmlns:vm="clr-namespace:HapcanProgrammer.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=vm:ShellViewModel, IsDesignTimeCreatable=True}" 
+            cal:Bind.AtDesignTime="True"
+        
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        >
+    <Window.Background>
+        <SolidColorBrush Color="{DynamicResource BackgroundColor}"/>
+    </Window.Background>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="471*"/>
+            <RowDefinition Height="40*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="{Binding DevicesColumnWidth, Mode=TwoWay}"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="{Binding ModuleColumnWidth, Mode=TwoWay}"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="{Binding MessagesColumnWidth, Mode=TwoWay}"/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+
+        <ContentControl x:Name="DeviceListViewModel" Grid.Column="1" Grid.Row="2" HorizontalContentAlignment="Stretch" cal:View.Context="{Binding DeviceListViewType}" />
+        
+        
+        <!--<Button Content="Add"
+                cal:Message.Attach="Add" />-->
+        <GridSplitter x:Name="gridSplitter" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" Width="6" />
+
+        <GridSplitter x:Name="gridSplitter2" Grid.Column="4" Grid.Row="2" HorizontalAlignment="Stretch" Width="6"/>
+
+        <StackPanel Grid.Column="3" HorizontalAlignment="Right" Grid.Row="1" Margin="0,0,-0.001,0" >
+            <Button x:Name="ExpandModuleView" Height="30" Width="30" Foreground="{DynamicResource TextColor}">+</Button>
+        </StackPanel>
+
+
+
+        <StackPanel Grid.Column="5" HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
+            <RadioButton cal:Message.Attach="ChangeMessageView('Auto')" Style="{StaticResource {x:Type ToggleButton}}" Content="Auto" />
+            <RadioButton cal:Message.Attach="ChangeMessageView('Compact')" Style="{StaticResource {x:Type ToggleButton}}" Content="Compact" />
+            <RadioButton cal:Message.Attach="ChangeMessageView('Grid')" Style="{StaticResource {x:Type ToggleButton}}" Content="Grid" Margin="0,0,24,0" />
+
+            <Button x:Name="ExpandMessagesView" Height="30" Width="30">+</Button>
+        </StackPanel>
+
+        <ContentControl x:Name="MessageListViewModel" Grid.Column="5" Grid.Row="2" HorizontalContentAlignment="Stretch" cal:View.Context="{Binding MessageListViewType}" />
+        
+
+        <!--<ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}"  >
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Received}" Value="False">
+                            <Setter Property="Background" Value="DarkOrange"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Frame.IsResponse}" Value="True">
+                            <Setter Property="Background" Value="#FFC98C"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>-->
+
+        <!--<Button Content="Add"
+                cal:Message.Attach="Add" />-->
+
+        <Button x:Name="button" cm:Message.Attach="[Event MouseEnter] = [Action buttonMouseEnter]" Content="Button" Grid.Column="5" HorizontalAlignment="Left"  VerticalContentAlignment="Center" Width="70.623" Height="26" VerticalAlignment="Top" Margin="0.976,-0.25,0,0"/>
+        <Button x:Name="About" Content="About" Grid.Column="5" HorizontalAlignment="Left" Margin="308.976,10,0,0" Height="20" VerticalAlignment="Top" />
+        <StackPanel Grid.Column="1" HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal" >
+            <!--<ContentControl x:Name="DevicesButtons" />-->
+            <Button x:Name="ScanBusForDevices" Height="30" Width="30" Background="#FFDDDDDD">SC</Button>
+            <Button x:Name="ExpandDevicesView" Height="30" Width="30" Background="#FFDDDDDD">+</Button>
+        </StackPanel>
+    </Grid>
+
+</Window>

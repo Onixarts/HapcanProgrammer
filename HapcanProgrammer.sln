@@ -5,6 +5,18 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HapcanProgrammer", "HapcanProgrammer\HapcanProgrammer.csproj", "{BD5A4E07-F5A4-47EC-BD5D-0F410240A136}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan", "Onixarts.Hapcan\Onixarts.Hapcan.csproj", "{C9AB9B19-AE7C-4825-9166-B6AC0E1EA74D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan.Bootloaders.UNIV_3", "plugins\Onixarts.Hapcan.Bootloaders.UNIV_3\Onixarts.Hapcan.Bootloaders.UNIV_3.csproj", "{36111CFF-0AF8-4B71-88D2-B6C40EC7625B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan.Buttons.UNIV_3_1", "plugins\Onixarts.Hapcan.Buttons.UNIV_3_1\Onixarts.Hapcan.Buttons.UNIV_3_1.csproj", "{A407A439-6E75-426D-903E-BC02FD55C380}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan.Gates.UNIV_3_102", "plugins\Onixarts.Hapcan.Gates.UNIV_3_102\Onixarts.Hapcan.Gates.UNIV_3_102.csproj", "{6C219430-1822-4454-8C47-F267A29D0149}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan.IR.UNIV_3_5", "plugins\Onixarts.Hapcan.IR.UNIV_3_5\Onixarts.Hapcan.IR.UNIV_3_5.csproj", "{A2048AA2-FDD5-4907-888D-CF6632DFD7B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onixarts.Hapcan.Relays.UNIV_3_2", "plugins\Onixarts.Hapcan.Relays.UNIV_3_2\Onixarts.Hapcan.Relays.UNIV_3_2.csproj", "{8FA75FA8-55FE-4385-B4FD-B7E7DDD864E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +27,30 @@ Global
 		{BD5A4E07-F5A4-47EC-BD5D-0F410240A136}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD5A4E07-F5A4-47EC-BD5D-0F410240A136}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD5A4E07-F5A4-47EC-BD5D-0F410240A136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9AB9B19-AE7C-4825-9166-B6AC0E1EA74D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9AB9B19-AE7C-4825-9166-B6AC0E1EA74D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9AB9B19-AE7C-4825-9166-B6AC0E1EA74D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9AB9B19-AE7C-4825-9166-B6AC0E1EA74D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36111CFF-0AF8-4B71-88D2-B6C40EC7625B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36111CFF-0AF8-4B71-88D2-B6C40EC7625B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36111CFF-0AF8-4B71-88D2-B6C40EC7625B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36111CFF-0AF8-4B71-88D2-B6C40EC7625B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A407A439-6E75-426D-903E-BC02FD55C380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A407A439-6E75-426D-903E-BC02FD55C380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A407A439-6E75-426D-903E-BC02FD55C380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A407A439-6E75-426D-903E-BC02FD55C380}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C219430-1822-4454-8C47-F267A29D0149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C219430-1822-4454-8C47-F267A29D0149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C219430-1822-4454-8C47-F267A29D0149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C219430-1822-4454-8C47-F267A29D0149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2048AA2-FDD5-4907-888D-CF6632DFD7B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2048AA2-FDD5-4907-888D-CF6632DFD7B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2048AA2-FDD5-4907-888D-CF6632DFD7B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2048AA2-FDD5-4907-888D-CF6632DFD7B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FA75FA8-55FE-4385-B4FD-B7E7DDD864E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FA75FA8-55FE-4385-B4FD-B7E7DDD864E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FA75FA8-55FE-4385-B4FD-B7E7DDD864E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FA75FA8-55FE-4385-B4FD-B7E7DDD864E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
