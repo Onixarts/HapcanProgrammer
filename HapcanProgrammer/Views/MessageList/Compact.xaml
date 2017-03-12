@@ -5,22 +5,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HapcanProgrammer.Views.MessageList"
              mc:Ignorable="d" 
-             d:DesignHeight="129" d:DesignWidth="542.636">
+             d:DesignHeight="256" d:DesignWidth="542.636"
+              xmlns:vm="clr-namespace:HapcanProgrammer.ViewModels"
+            xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             d:DataContext="{d:DesignInstance Type=vm:MessageListViewModel, IsDesignTimeCreatable=True}" 
+                cal:Bind.AtDesignTime="True"
+             >
     <Grid>
-        <StackPanel>
-            <TextBlock Text="COMPACT" Background="#FF549186"/>
+        <TextBlock Text="COMPACT" Background="#FF549186"/>
 
-            <ListView x:Name="Messages" BorderBrush="{DynamicResource TextColor}" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding}" Foreground="{DynamicResource TextColor}" />
-                            <TextBlock Text="{Binding Frame}" Foreground="{DynamicResource Accent2Brush}" FontSize="10"/>
+        <ListView x:Name="Messages" BorderBrush="{DynamicResource TextColor}" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding}" Foreground="{DynamicResource TextColor}" />
+                        <TextBlock Text="{Binding Frame}" Foreground="{DynamicResource Accent2Brush}" FontSize="10"/>
 
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </UserControl>

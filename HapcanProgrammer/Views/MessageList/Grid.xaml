@@ -5,12 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HapcanProgrammer.Views.MessageList"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="738.76">
+             d:DesignHeight="300" d:DesignWidth="738.76"
+             xmlns:vm="clr-namespace:HapcanProgrammer.ViewModels"
+            xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             d:DataContext="{d:DesignInstance Type=vm:MessageListViewModel, IsDesignTimeCreatable=True}" 
+                cal:Bind.AtDesignTime="True"
+             >
     <Grid>
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
             <TextBlock Text="GRID" Background="#FF549186"/>
 
-            <ListView x:Name="Messages" BorderBrush="{DynamicResource TextColor}" >
+            <ListView x:Name="Messages" ItemsSource="{Binding Messages}" BorderBrush="{DynamicResource TextColor}" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Time" Width="60" DisplayMemberBinding="{Binding Time, StringFormat=\{0:HH:mm:ss\}}" />
@@ -21,6 +28,5 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        </StackPanel>
     </Grid>
 </UserControl>

@@ -39,8 +39,10 @@ namespace HapcanProgrammer.ViewModels
 
         public ShellViewModel()
         {
-            if (!Execute.InDesignMode)
+            if (Execute.InDesignMode)
             {
+                MessageListViewModel = new MessageListViewModel();
+                MessageListViewType = MessageListViewType.Compact;
             }
             FillTestData();
 

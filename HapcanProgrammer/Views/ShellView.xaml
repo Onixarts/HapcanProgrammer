@@ -23,7 +23,7 @@
             <RowDefinition Height="60"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="471*"/>
-            <RowDefinition Height="40*"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
@@ -58,7 +58,8 @@
             <Button x:Name="ExpandMessagesView" Height="30" Width="30">+</Button>
         </StackPanel>
 
-        <ContentControl x:Name="MessageListViewModel" Grid.Column="5" Grid.Row="2" HorizontalContentAlignment="Stretch" cal:View.Context="{Binding MessageListViewType}" />
+        <!--x:Name="MessageListViewModel"-->
+        <ContentControl Grid.Column="5" Grid.Row="2" HorizontalContentAlignment="Stretch" cal:View.Context="{Binding MessageListViewType}" cal:View.Model="{Binding MessageListViewModel}"/>
         
 
         <!--<ListView.ItemContainerStyle>

@@ -16,6 +16,21 @@ namespace HapcanProgrammer.ViewModels
 
         public MessageListViewModel()
         {
+            if (Execute.InDesignMode)
+            {
+                Messages = new BindableCollection<Onixarts.Hapcan.Messages.Message>()
+                {
+                    new Onixarts.Hapcan.Messages.Message(0x02),
+                    new Onixarts.Hapcan.Messages.Message(0x03),
+                    new Onixarts.Hapcan.Messages.Message(0x04),
+                    new Onixarts.Hapcan.Messages.Message(0x02),
+                    new Onixarts.Hapcan.Messages.Message(0x03),
+                    new Onixarts.Hapcan.Messages.Message(0x04),
+                    new Onixarts.Hapcan.Messages.Message(0x02),
+                    new Onixarts.Hapcan.Messages.Message(0x03),
+                    new Onixarts.Hapcan.Messages.Message(0x04),
+                };
+            }
         }
     }
 }
