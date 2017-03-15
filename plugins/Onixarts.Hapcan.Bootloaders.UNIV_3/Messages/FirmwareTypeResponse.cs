@@ -67,6 +67,18 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Messages
             }
         }
 
+        public byte FirmwareVersion
+        {
+            get
+            {
+                return Frame.GetData(5);
+            }
+            set
+            {
+                Frame.SetData(5, value);
+            }
+        }
+
         public byte BootloaderVersion1
         {
             get
@@ -94,11 +106,12 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Messages
         // firmware type wziąc z pluginów
         public override string ToString()
         {
-            return string.Format("Firmware type response: Type: 0x{0:X4}, HVers: {1}, AType: 0x{2:X2}, AVer: {3}",
+            return string.Format("Firmware type response: Hardware: 0x{0:X4}, Firmware: {1}.{2}.{3}.{4}",
                 HardwareType,
                 HardwareVersion,
                 ApplicationType,
-                ApplicationVersion
+                ApplicationVersion,
+                FirmwareVersion
             );
         }
 

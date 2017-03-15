@@ -7,35 +7,19 @@ using System.Threading.Tasks;
 
 namespace Onixarts.Hapcan.Devices
 {
-    //public enum DeviceType : byte
-    //{
-    //    Unknown = 0x00,
-    //    Button = 0x01,
-    //    Relay = 0x02,
-    //    IRReceiver = 0x03,
-    //    TemperatureSensor = 0x04,
-    //    IRTransmitter = 0x05,
-    //    Dimmer = 0x06,
-    //    BlindController = 0x07,
-    //    LEDController = 0x08,
-    //    Last
-    //}
-
-
     public class DeviceBase : PropertyChangedBase
     {
-        //private DeviceType m_type;
-        private byte _moduleNumber;
-        private byte _groupNumber;
-        private int m_serialNumber;
-        //private Int16 _hardwareVersion;
-        private Version _moduleVersion = new Version();
-        private Version _bootloaderVersion = new Version();
+        private byte moduleNumber;
+        private byte groupNumber;
+        private int serialNumber;
+        private short hardwareType;
+        private byte hardwareVersion;
+        private byte firmwareVersion;
+        //private Version moduleVersion = new Version();
+        private Version bootloaderVersion = new Version();
 
         private string description1;
         private string description2;
-        //private int _descriptionFrameIndex = 0;
-        //private Int16 _firmwareVersion;
 
         public DeviceBase()
         {
@@ -43,54 +27,53 @@ namespace Onixarts.Hapcan.Devices
             description2 = ">";
         }
 
-        //public DeviceType Type
-        //{
-        //    get { return m_type; }
-        //    set
-        //    {
-        //        if (value == DeviceType.Unknown || value >= DeviceType.Last)
-        //            throw new ArgumentOutOfRangeException("Type", "Incorrect device type");
-        //        m_type = value;
-        //        //RaisePropertyChanged(() => Type);
-        //    }
-        //}
-
         public byte ModuleNumber
         {
-            get { return _moduleNumber; }
+            get { return moduleNumber; }
             set
             {
-                _moduleNumber = value;
+                moduleNumber = value;
                 NotifyOfPropertyChange(() => ModuleNumber);
             }
         }
         public byte GroupNumber
         {
-            get { return _groupNumber; }
+            get { return groupNumber; }
             set
             {
-                _groupNumber = value;
+                groupNumber = value;
                 NotifyOfPropertyChange(() => GroupNumber);
             }
         }
         public int SerialNumber
         {
-            get { return m_serialNumber; }
+            get { return serialNumber; }
             set
             {
-                m_serialNumber = value;
+                serialNumber = value;
                 NotifyOfPropertyChange(() => SerialNumber);
             }
         }
-        //public Int16 HardwareVersion
-        //{
-        //    get { return _hardwareVersion; }
-        //    set
-        //    {
-        //        _hardwareVersion = value;
-        //        RaisePropertyChanged(() => HardwareVersion);
-        //    }
-        //}
+
+        public short HardwareType
+        {
+            get { return hardwareType; }
+            set
+            {
+                hardwareType = value;
+                NotifyOfPropertyChange(() => HardwareType);
+            }
+        }
+
+        public byte HardwareVersion
+        {
+            get { return hardwareVersion; }
+            set
+            {
+                hardwareVersion = value;
+                NotifyOfPropertyChange(() => HardwareVersion);
+            }
+        }
 
 
         private byte applicationType;
@@ -117,20 +100,23 @@ namespace Onixarts.Hapcan.Devices
         }
 
 
-        //{
-        //    get { return _moduleVersion; }
-        //    set
-        //    {
-        //        _moduleVersion = value;
-        //        RaisePropertyChanged(() => ModuleVersion);
-        //    }
-        //}
-        public Version BootloaderVersion
+        public byte FirmwareVersion
         {
-            get { return _bootloaderVersion; }
+            get { return firmwareVersion; }
             set
             {
-                _bootloaderVersion = value;
+                firmwareVersion = value;
+                NotifyOfPropertyChange(() => FirmwareVersion);
+            }
+        }
+
+
+        public Version BootloaderVersion
+        {
+            get { return bootloaderVersion; }
+            set
+            {
+                bootloaderVersion = value;
                 NotifyOfPropertyChange(() => BootloaderVersion);
             }
         }
@@ -152,48 +138,16 @@ namespace Onixarts.Hapcan.Devices
             }
         }
 
-        //public void SerialNumberFromBytes(byte id0, byte id1, byte id2, byte id3)
-        //{
-        //    SerialNumber = (id0 << 24) + (id1 << 16) + (id2 << 8) + id3;
-        //}
 
-
-        //public void UpdateHardwareInfo(HardwareTypeResponseMessage message)
-        //{
-        //    SerialNumber = message.SerialNumber;
-        //    ModuleNumber = message.Frame.ModuleNumber;
-        //    GroupNumber = message.Frame.GroupNumber;
-        //    HardwareVersion = message.HardwareVersion;
-        //}
-
-
-        //public void UpdateFirmwareInfo(FirmwareTypeNodeResponseMessage message)
-        //{
-        //    ModuleVersion = new Version((int)message.HVersion, (int)message.Type, (int)message.ApplicationVersion, (int)message.FirmwareVersion);
-        //    BootloaderVersion = new Version((int)message.BootloaderVersion1, (int)message.BootloaderVersion2);
-        //    Type = message.Type;
-        //    RaisePropertyChanged(() => ModuleFirmwareVersion);
-        //}
-
-        //public void UpdateDescription(string text)
-        //{
-        //    switch (_descriptionFrameIndex)
-        //    {
-        //        case 0: _description = text; _descriptionFrameIndex++; break;
-        //        case 1: _description += text; _descriptionFrameIndex = 0; RaisePropertyChanged(() => Description); break;
-        //    }
-        //}
-
-        //public string ModuleFirmwareVersion
-        //{
-        //    get
-        //    {
-        //        return String.Format("{0} {1}",
-        //            ModuleVersion,
-        //            Type
-        //        );
-        //    }
-        //}
-
+        private IDevicePlugin devicePlugin;
+        public IDevicePlugin DevicePlugin
+        {
+            get { return devicePlugin; }
+            set
+            {
+                devicePlugin = value;
+                NotifyOfPropertyChange(() => DevicePlugin);
+            }
+        }
     }
 }

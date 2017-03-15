@@ -1,4 +1,5 @@
-﻿using Onixarts.Hapcan.Messages;
+﻿using Onixarts.Hapcan.Devices;
+using Onixarts.Hapcan.Messages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -8,12 +9,13 @@ using System.Threading.Tasks;
 
 namespace Onixarts.Hapcan.Gates.UNIV_3_102
 {
-    [Export(typeof(IHapcanDevice))]
-    public class Module : IHapcanDevice
+    [Export(typeof(IDevicePlugin))]
+    public class Module : IDevicePlugin
     {
         public string HardwareVersionName { get { return "UNIV 3"; } }
         public short HardwareType { get { return 0x3000; } }
         public byte HardwareVersion { get { return 0x03; } }
+        public byte ApplicationType { get { return 102; } }
 
 
         public enum FrameType

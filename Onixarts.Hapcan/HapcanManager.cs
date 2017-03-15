@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Onixarts.Hapcan.Messages;
+using Onixarts.Hapcan.Devices;
 
 namespace Onixarts.Hapcan
 {
@@ -27,7 +28,7 @@ namespace Onixarts.Hapcan
         public BindableCollection<Hapcan.Messages.Message> Messages { get; private set; }
 
         [ImportMany]
-        public IEnumerable<IHapcanDevice> HapcanDevicePlugins { get; set; }
+        public IEnumerable<IDevicePlugin> DevicePlugins { get; set; }
 
         [ImportingConstructor]
         public HapcanManager(IEventAggregator events)
@@ -55,9 +56,9 @@ namespace Onixarts.Hapcan
             // TODO: jeśli znane jest urządzenie z którego pochodzi ramka to zwracamy się do niego czy potrafi ją wyświetlić
             // jesli nie to pytamy czy ktokolwiek potrafi
 
-            IHapcanDevice hapcanDevicePlugin = null;
+            IDevicePlugin hapcanDevicePlugin = null;
 
-            foreach ( var devicePlugin in HapcanDevicePlugins)
+            foreach ( var devicePlugin in DevicePlugins)
             {
                 msg = devicePlugin.GetMessage(e.Frame);
                 if (msg != null)
@@ -84,7 +85,7 @@ namespace Onixarts.Hapcan
             Messages.Message msg = null;
 
             // parsowanie ramki za pomocą pluginów
-            foreach (var devicePlugin in HapcanDevicePlugins)
+            foreach (var devicePlugin in DevicePlugins)
             {
                 msg = devicePlugin.GetMessage(e.Frame);
                 if (msg != null)

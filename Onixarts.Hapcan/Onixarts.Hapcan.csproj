@@ -81,11 +81,12 @@
     <Compile Include="Communication\EthernetConnector.cs" />
     <Compile Include="HapcanManager.cs" />
     <Compile Include="Messages\Frame.cs" />
-    <Compile Include="Messages\IHapcanDevice.cs" />
+    <Compile Include="Devices\IDevicePlugin.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\MenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Devices\DeviceBase.cs" />

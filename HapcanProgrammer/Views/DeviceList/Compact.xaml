@@ -5,16 +5,50 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HapcanProgrammer.Views.DeviceList"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:vm="clr-namespace:HapcanProgrammer.ViewModels"
+             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             d:DataContext="{d:DesignInstance Type=vm:DeviceListViewModel, IsDesignTimeCreatable=True}" 
+             cal:Bind.AtDesignTime="True"
+             >
     <Grid>
-        <ListView x:Name="Devices" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+        <ListView x:Name="Devices" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Foreground="{DynamicResource Accent2Brush}" >
-                        <Run Text="{Binding Description}" Foreground="{DynamicResource TextColor}" /> (<Run Text="{Binding ModuleNumber}" />, <Run Text="{Binding GroupNumber}" />)
-                    </TextBlock>
+                    <Border>
+                        <TextBlock Foreground="{DynamicResource Accent2Brush}" >
+                        <Run Text="{Binding Description}" Foreground="{DynamicResource TextColor}" /> 
+                        (<Run Text="{Binding ModuleNumber}" />, <Run Text="{Binding GroupNumber}" />)
+                        <Run Text="{Binding HardwareVersion}" />.<Run Text="{Binding ApplicationType}" />.<Run Text="{Binding ApplicationVersion}" />.<Run Text="{Binding FirmwareVersion}" />
+                            <TextBlock.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DevicePlugin}" Value="{x:Null}">
+                                            <Setter Property="TextBlock.Opacity" Value="0.6"/>
+                                            <Setter Property="TextBlock.ToolTip" Value="Plugin for device not found" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
+            <ListView.ContextMenu>
+                <ContextMenu ItemsSource="{Binding DeviceMenuOptions}" >
+                    <ContextMenu.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}" />
+                        </DataTemplate>
+                    </ContextMenu.ItemTemplate>
+                    <ContextMenu.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <!--<Setter Property="cal:Action.TargetWithoutContext" Value="{Binding DeviceBase}" />-->
+                            <Setter Property="cal:Message.Attach" Value="CallAction" />
+                        </Style>
+                    </ContextMenu.ItemContainerStyle>
+                </ContextMenu>
+            </ListView.ContextMenu>
         </ListView>
     </Grid>
 </UserControl>

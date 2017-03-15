@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 using Onixarts.Hapcan.Messages;
 using System.ComponentModel.Composition;
 using System.Threading;
+using Onixarts.Hapcan.Devices;
 
 namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 {
-    [Export(typeof(IHapcanDevice))]
-    public class Module : IHapcanDevice
+    [Export(typeof(IDevicePlugin))]
+    public class Module : IDevicePlugin
     {
         public string HardwareVersionName { get { return ""; } }
         public short HardwareType { get { return 0; } }
         public byte HardwareVersion { get { return 0; } }
+        public byte ApplicationType { get { return 0; } }
 
 
         [Import]
@@ -125,9 +127,11 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 var device = HapcanManager.Devices.Select(d => d).Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).FirstOrDefault();
                 if (device != null)
                 {
-
+                    device.HardwareType = message.HardwareType;
+                    device.HardwareVersion = message.HardwareVersion;
                     device.ApplicationType = message.ApplicationType;
                     device.ApplicationVersion = message.ApplicationVersion;
+                    device.FirmwareVersion = message.FirmwareVersion;
                     device.BootloaderVersion = new Version(message.BootloaderVersion1, message.BootloaderVersion2);
                 }
                 else
@@ -210,7 +214,20 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             // power request 0x10b
 
 
-
+            await Task.Run(() =>
+            {
+                //Thread.Sleep(1000);
+                foreach(var device in HapcanManager.Devices)
+                {
+                    var plugin = HapcanManager.DevicePlugins.Where(p => p.HardwareType == device.HardwareType
+                                                                   && p.HardwareVersion == device.HardwareVersion
+                                                                   && p.ApplicationType == device.ApplicationType).FirstOrDefault();
+                    if(plugin != null)
+                    {
+                        device.DevicePlugin = plugin;
+                    }
+                }
+            });
             //foreach (var device in DevicesList)
             //{
             //    var msg = new Hapcan.Message.Request.FirmwareTypeNodeRequestMessage();
