@@ -179,7 +179,6 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                     var msg = new Messages.HardwareTypeRequestToGroup();
                     msg.RequestedGroupNumber = (byte)i;
                     HapcanManager.Connector.Send(msg);
-                    //SimpleIoc.Default.GetInstance<EthernetConnector>().Send(msg);
                     Thread.Sleep(20);
                 }
             });

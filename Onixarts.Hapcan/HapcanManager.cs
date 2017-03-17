@@ -51,50 +51,44 @@ namespace Onixarts.Hapcan
 
         public void Handle(Communication.ReceivedEvent e)
         {
-            Messages.Message msg = null;
-
-            // TODO: jeśli znane jest urządzenie z którego pochodzi ramka to zwracamy się do niego czy potrafi ją wyświetlić
-            // jesli nie to pytamy czy ktokolwiek potrafi
-
-            IDevicePlugin hapcanDevicePlugin = null;
-
-            foreach ( var devicePlugin in DevicePlugins)
-            {
-                msg = devicePlugin.GetMessage(e.Frame);
-                if (msg != null)
-                {
-                    hapcanDevicePlugin = devicePlugin;
-                    break;
-                }
-            }
-
-            if (msg == null)
-                msg = new Messages.Message(e.Frame);
-
-            // TODO: jeśli ten plugin nie moze obsłużyć to sprawdzić czy któryś inny umie
-            if (hapcanDevicePlugin != null)
-                hapcanDevicePlugin.HandleMessage(msg);
-
-
-            //TODO usuwanie starych ramek
-            Messages.Insert(0, msg);
+            HandleMessage(e.Frame);
         }
 
         public void Handle(Communication.SentEvent e)
         {
+            HandleMessage(e.Frame);
+        }
+
+        private void HandleMessage(Frame frame)
+        {
             Messages.Message msg = null;
 
-            // parsowanie ramki za pomocą pluginów
-            foreach (var devicePlugin in DevicePlugins)
+            var sourceDevice = Devices.Where(d => d.GroupNumber == frame.GroupNumber && d.ModuleNumber == frame.ModuleNumber).FirstOrDefault();
+
+            IDevicePlugin devicePlugin = sourceDevice?.DevicePlugin;
+            msg = devicePlugin?.GetMessage(frame);
+
+            // device plugin don't recognize message? maybe other plugin would
+            if (msg == null)
             {
-                msg = devicePlugin.GetMessage(e.Frame);
-                if (msg != null)
-                    break;
+                foreach (var plugin in DevicePlugins)
+                {
+                    msg = plugin.GetMessage(frame);
+                    if (msg != null)
+                    {
+                        devicePlugin = plugin;
+                        break;
+                    }
+                }
             }
 
+            // still no luck? just create default message
             if (msg == null)
-                msg = new Messages.Message(e.Frame);
-            //TODO usuwanie starych ramek
+                msg = new Messages.Message(frame);
+
+            if (devicePlugin != null)
+                devicePlugin.HandleMessage(msg);
+
             Messages.Insert(0, msg);
         }
 
