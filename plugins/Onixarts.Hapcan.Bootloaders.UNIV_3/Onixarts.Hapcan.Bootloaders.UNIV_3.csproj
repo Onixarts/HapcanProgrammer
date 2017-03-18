@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions.cs" />
+    <Compile Include="Messages\RebootRequestToNode.cs" />
     <Compile Include="Messages\FirmwareTypeRequestToNode.cs" />
     <Compile Include="Messages\FirmwareTypeRequestToGroup.cs" />
     <Compile Include="Messages\DescriptionResponse.cs" />

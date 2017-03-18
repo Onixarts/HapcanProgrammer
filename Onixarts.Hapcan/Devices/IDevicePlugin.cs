@@ -1,4 +1,6 @@
 ﻿using Onixarts.Hapcan.Messages;
+using Onixarts.Hapcan.UI;
+using System.Collections.Generic;
 
 namespace Onixarts.Hapcan.Devices
 {
@@ -9,6 +11,9 @@ namespace Onixarts.Hapcan.Devices
         short HardwareType { get; }
         byte HardwareVersion { get; }
         byte ApplicationType { get; }
+
         bool HandleMessage(Message msg);
+
+        IEnumerable<MenuItem> DevicesListContextMenuItems { get; }
     }
 }

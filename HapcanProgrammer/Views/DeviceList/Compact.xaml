@@ -17,9 +17,9 @@
                 <DataTemplate>
                     <Border>
                         <TextBlock Foreground="{DynamicResource Accent2Brush}" >
-                        <Run Text="{Binding Description}" Foreground="{DynamicResource TextColor}" /> 
-                        (<Run Text="{Binding ModuleNumber}" />, <Run Text="{Binding GroupNumber}" />)
-                        <Run Text="{Binding HardwareVersion}" />.<Run Text="{Binding ApplicationType}" />.<Run Text="{Binding ApplicationVersion}" />.<Run Text="{Binding FirmwareVersion}" />
+                            <Run Text="{Binding Description}" Foreground="{DynamicResource TextColor}" /> 
+                            (<Run Text="{Binding ModuleNumber}" />, <Run Text="{Binding GroupNumber}" />)
+                            <Run Text="{Binding HardwareVersion}" />.<Run Text="{Binding ApplicationType}" />.<Run Text="{Binding ApplicationVersion}" />.<Run Text="{Binding FirmwareVersion}" />
                             <TextBlock.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -35,7 +35,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ListView.ContextMenu>
-                <ContextMenu ItemsSource="{Binding DeviceMenuOptions}" >
+                <ContextMenu ItemsSource="{Binding DeviceContextMenuItems}">
                     <ContextMenu.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DisplayName}" />
@@ -43,8 +43,8 @@
                     </ContextMenu.ItemTemplate>
                     <ContextMenu.ItemContainerStyle>
                         <Style TargetType="MenuItem">
-                            <!--<Setter Property="cal:Action.TargetWithoutContext" Value="{Binding DeviceBase}" />-->
-                            <Setter Property="cal:Message.Attach" Value="CallAction" />
+                            <Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItem}" />
+                            <Setter Property="cal:Message.Attach" Value="CallAction($dataContext, $this.Tag)" />
                         </Style>
                     </ContextMenu.ItemContainerStyle>
                 </ContextMenu>

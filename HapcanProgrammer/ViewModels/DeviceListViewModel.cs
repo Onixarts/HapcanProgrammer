@@ -7,18 +7,39 @@ using System.Text;
 using System.Threading.Tasks;
 using Onixarts.Hapcan.Devices;
 using Onixarts.Hapcan.UI;
+using Onixarts.Hapcan;
 
 namespace HapcanProgrammer.ViewModels
 {
     [Export(typeof(DeviceListViewModel))]
-    public class DeviceListViewModel
+    public class DeviceListViewModel : Screen
     {
 
         [Import]
         public BindableCollection<DeviceBase> Devices { get; set; }
 
-        //[ImportMany]
-        public BindableCollection<MenuItem> DeviceMenuOptions { get; set; }
+        DeviceBase selectedDevice;
+        public DeviceBase SelectedDevice
+        {
+            get
+            {
+                return selectedDevice;
+            }
+            set
+            {
+                if (selectedDevice != value)
+                {
+                    selectedDevice = value;
+                    CreateContextMenuForSelectedItem();
+                }
+                NotifyOfPropertyChange(() => SelectedDevice);
+            }
+        }
+
+        public BindableCollection<MenuItem> DeviceContextMenuItems{ get; set; }
+
+        [Import]
+        HapcanManager HapcanManager { get; set; }
 
         public DeviceListViewModel()
         {
@@ -36,26 +57,25 @@ namespace HapcanProgrammer.ViewModels
                     new DeviceBase() { Description="device8", GroupNumber=3, ModuleNumber=5,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3, ApplicationType=0x02, ApplicationVersion=0 },
                     new DeviceBase() { Description="device9", GroupNumber=4, ModuleNumber=4,SerialNumber=123234,HardwareType=0x3000, HardwareVersion=3, ApplicationType=0x05, ApplicationVersion=0 },
                 };
-
-                DeviceMenuOptions = new BindableCollection<MenuItem>()
-                {
-                    new MenuItem() {DisplayName = "opcja dynamiczna 1", Action = Test1 },
-                    new MenuItem() {DisplayName = "opcja dynamiczna 2",  Action = ()=> { System.Windows.MessageBox.Show("test2"); } },
-                    new MenuItem() {DisplayName = "opcja dynamiczna 3",  Action = ()=> { System.Windows.MessageBox.Show("test3"); } },
-                };
-
             }
 
-
+            DeviceContextMenuItems = new BindableCollection<MenuItem>();
         }
 
-        public void Test1()
+        private void CreateContextMenuForSelectedItem()
         {
-            System.Windows.MessageBox.Show("test1");
+            if (selectedDevice != null)
+            {
+                DeviceContextMenuItems.Clear();
+
+                var bootloaderPlugin = HapcanManager.DevicePlugins.Where(p => p.HardwareType == selectedDevice.HardwareType
+                                   && p.HardwareVersion == selectedDevice.HardwareVersion
+                                   && p.ApplicationType == 0).FirstOrDefault();
+
+                DeviceContextMenuItems.AddRange(bootloaderPlugin?.DevicesListContextMenuItems);
+            }
+
         }
-
-
-        public DeviceBase SelectedDevice { get { return null; } set { } }
 
     }
 }

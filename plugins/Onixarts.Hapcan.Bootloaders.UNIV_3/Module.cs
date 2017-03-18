@@ -7,20 +7,28 @@ using Onixarts.Hapcan.Messages;
 using System.ComponentModel.Composition;
 using System.Threading;
 using Onixarts.Hapcan.Devices;
+using Onixarts.Hapcan.UI;
 
 namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 {
     [Export(typeof(IDevicePlugin))]
     public class Module : IDevicePlugin
     {
-        public string HardwareVersionName { get { return ""; } }
-        public short HardwareType { get { return 0; } }
-        public byte HardwareVersion { get { return 0; } }
-        public byte ApplicationType { get { return 0; } }
+        public string HardwareVersionName { get { return "UNIV 3"; } }
+        public short HardwareType { get { return 0x3000; } }
+        public byte HardwareVersion { get { return 0x03; } }
+        public byte ApplicationType { get { return 0; } }   // Bootloader plugin must have application type of 0
 
 
+        private HapcanManager hapcanManager;
         [Import]
-        HapcanManager HapcanManager { get; set; }
+        HapcanManager HapcanManager { get { return hapcanManager; } set { hapcanManager = value; Actions.HapcanManager = value; } }
+
+        private Actions Actions { get; } = new Actions();
+
+        public Module()
+        {
+        }
 
         public enum FrameType
         {
@@ -33,8 +41,8 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             ErrorFrame = 0x0F0,
 
             EnterProgrammingMode = 0x100,
-            RebootRequestToGroup = 0x101,
-            RebootRequestToNode = 0x102,
+            RebootMessageToGroup = 0x101,
+            RebootMessageToNode = 0x102,
             HardwareType = 0x103,
             HardwareTypeMessageToNode = 0x104,
             FirmwareTypeMessageToGroup = 0x105,
@@ -71,8 +79,8 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 case FrameType.ErrorFrame: break;
                 
                 case FrameType.EnterProgrammingMode: break;
-                case FrameType.RebootRequestToGroup: break;
-                case FrameType.RebootRequestToNode: break;
+                case FrameType.RebootMessageToGroup: break;
+                case FrameType.RebootMessageToNode: return new Messages.RebootRequestToNode(frame);
                 case FrameType.HardwareType: if (frame.IsResponse) return new Messages.HardwareTypeResponse(frame); else return new Messages.HardwareTypeRequestToGroup(frame);
                 case FrameType.HardwareTypeMessageToNode: break;
                 case FrameType.FirmwareTypeMessageToGroup: if (frame.IsResponse) return new Messages.FirmwareTypeResponse(frame); else return new Messages.FirmwareTypeRequestToGroup(frame);
@@ -227,25 +235,14 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                     }
                 }
             });
-            //foreach (var device in DevicesList)
-            //{
-            //    var msg = new Hapcan.Message.Request.FirmwareTypeNodeRequestMessage();
-            //    msg.RequestedGroupNumber = device.GroupNumber;
-            //    msg.RequestedModuleNumber = device.ModuleNumber;
-            //    SimpleIoc.Default.GetInstance<EthernetConnector>().Send(msg);
-            //    Thread.Sleep(100);
-            //}
+        }
 
-            ////Thread.Sleep(500);
-            //foreach (var device in DevicesList)
-            //{
-            //    var msg = new Hapcan.Message.Request.DescriptionNodeRequestMessage();
-            //    msg.RequestedGroupNumber = device.GroupNumber;
-            //    msg.RequestedModuleNumber = device.ModuleNumber;
-            //    SimpleIoc.Default.GetInstance<EthernetConnector>().Send(msg);
-            //    Thread.Sleep(100);
-            //}
-            //return "asd";
+        public IEnumerable<MenuItem> DevicesListContextMenuItems
+        {
+            get
+            {
+                return new[] { new MenuItem() { DisplayName = "Reset device", Action = Actions.RebootAction }};
+            }
         }
     }
 }

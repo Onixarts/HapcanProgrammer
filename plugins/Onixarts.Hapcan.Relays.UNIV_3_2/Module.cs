@@ -1,5 +1,6 @@
 ﻿using Onixarts.Hapcan.Devices;
 using Onixarts.Hapcan.Messages;
+using Onixarts.Hapcan.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -39,5 +40,12 @@ namespace Onixarts.Hapcan.Relays.UNIV_3_2
             return false;
         }
 
+        public IEnumerable<MenuItem> DevicesListContextMenuItems
+        {
+            get
+            {
+                return null;// new[] { new MenuItem() { DisplayName = "Reset Device" } };
+            }
+        }
     }
 }
