@@ -18,7 +18,7 @@
                     <GroupBox x:Name="NodeId" Header="Change node ID" HorizontalAlignment="Stretch">
                         <Grid Margin="32">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="400" />
+                                <ColumnDefinition Width="350" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -34,7 +34,14 @@
                                 
                             </StackPanel>
                             <Button x:Name="UpdateID" Grid.Column="1" Grid.Row="0" Content="Update" Padding="20,5"   Style="{StaticResource AccentedSquareButtonStyle}" ToolTip="Updates device's node and group number to given values"/>
-                            <Button x:Name="RestoreDefaultID" Grid.Column="1" Grid.Row="2"  Content="Restore default (5,9)"  Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Center" Padding="20,10" ToolTip="Restore default node and group values"/>
+                            <Button x:Name="RestoreDefaultID" Grid.Column="1" Grid.Row="2"   Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Center" Padding="20,10" ToolTip="Restore default node and group values">
+                                <TextBlock>
+                                    Restore default (
+                                    <Run Text="{Binding DefaultModuleNumber, Mode=OneWay}" />,
+                                    <Run Text="{Binding DefaultGroupNumber, Mode=OneWay}" />
+                                     )
+                                </TextBlock>
+                            </Button>
                         </Grid>
                         
                         
@@ -42,7 +49,7 @@
                     <GroupBox x:Name="DescriptionGroupBox" Header="Change node description" HorizontalAlignment="Stretch">
                         <Grid Margin="30">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="400" />
+                                <ColumnDefinition Width="350" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" x:Name="Description" VerticalAlignment="Center" Height="Auto" Width="140" MaxLength="16">nazwa</TextBox>

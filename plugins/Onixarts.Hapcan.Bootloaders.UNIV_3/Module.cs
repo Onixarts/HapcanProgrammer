@@ -47,7 +47,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             HardwareTypeMessageToNode = 0x104,
             FirmwareTypeMessageToGroup = 0x105,
             FirmwareTypeMessageToNode = 0x106,
-            SetDefaultNodeAndGroupRequestToNode = 0x107,
+            SetDefaultNodeAndGroupMessageToNode = 0x107,
 
             StatusRequestToGroup = 0x108,
             StatusRequestToNode = 0x109,
@@ -85,8 +85,8 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 case FrameType.HardwareTypeMessageToNode: if (frame.IsResponse) return new Messages.HardwareTypeResponseForNode(frame); else return new Messages.HardwareTypeRequestToNode(frame);
                 case FrameType.FirmwareTypeMessageToGroup: if (frame.IsResponse) return new Messages.FirmwareTypeResponse(frame); else return new Messages.FirmwareTypeRequestToGroup(frame);
                 case FrameType.FirmwareTypeMessageToNode: if (frame.IsResponse) return new Messages.FirmwareTypeResponse(frame); else return new Messages.FirmwareTypeRequestToNode(frame);
-                case FrameType.SetDefaultNodeAndGroupRequestToNode: break;
-                
+                case FrameType.SetDefaultNodeAndGroupMessageToNode: if (frame.IsResponse) return new Messages.SetDefaultNodeAndGroupResponse(frame); else return new Messages.SetDefaultNodeAndGroupRequestToNode(frame);
+
                 case FrameType.StatusRequestToGroup: break;
                 case FrameType.StatusRequestToNode: break;
                 
@@ -226,7 +226,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
         [Export(typeof(Func<int,Task>))]
         public async Task ScanBusForDevices(int asd)
         {
-            const int rangeTo = 10;
+            const int rangeTo = 255;
             
             await Task.Run(() =>
             {

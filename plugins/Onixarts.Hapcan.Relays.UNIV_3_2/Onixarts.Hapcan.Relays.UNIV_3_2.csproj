@@ -49,6 +49,7 @@
     <ProjectReference Include="..\..\Onixarts.Hapcan\Onixarts.Hapcan.csproj">
       <Project>{C9AB9B19-AE7C-4825-9166-B6AC0E1EA74D}</Project>
       <Name>Onixarts.Hapcan</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -60,5 +60,16 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             await ProgrammingFlow.StartAsync(device, programmingData, moduleNumber, groupNumber);
         }
 
+        public async void RestoreDefaultIdAsync(DeviceBase device)
+        {
+            //TODO: AAAA osobne flowy porobić i usunąc klase Actions. Zobaczyć czy da się RebotAction jakoś przenieść
+            var msg = new Messages.SetDefaultNodeAndGroupRequestToNode();
+            msg.RequestedModuleNumber = device.ModuleNumber;
+            msg.RequestedGroupNumber = device.GroupNumber;
+            HapcanManager.Connector.Send(msg);
+
+            await new Flows.ProgrammingFlow().PingDeviceAsync(device, (byte)(device.SerialNumber >> 8), (byte)device.SerialNumber);
+        }
+
     }
 }

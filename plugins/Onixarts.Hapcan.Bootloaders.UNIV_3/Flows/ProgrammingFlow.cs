@@ -235,6 +235,30 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
             HapcanManager.Connector.Send(msg);
         }
 
+        public async Task PingDeviceAsync(DeviceBase device, byte extraModuleNumber = 0, byte extraGroupNumber = 0)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    CurrentDevice = device;
+                    ExtraModuleNumber = extraModuleNumber;
+                    ExtraGroupNumber = extraGroupNumber;
+
+                    // in case module has changed ID, ping this new module ID
+                    if (ExtraModuleNumber != 0 && ExtraGroupNumber != 0)
+                    {
+                        PingDevice(ExtraModuleNumber, ExtraGroupNumber);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    System.Windows.MessageBox.Show(e.Message);
+                }
+            });
+        }
+
         bool PingDevice(byte moduleNumber, byte groupNumber)
         {
             int retryCounter = 5;

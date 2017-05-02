@@ -31,6 +31,8 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.ViewModels
                 GroupNumber = Device.GroupNumber;
                 Description = device.Description;
                 NotifyOfPropertyChange(() => Device);
+                NotifyOfPropertyChange(() => DefaultModuleNumber);
+                NotifyOfPropertyChange(() => DefaultGroupNumber);
             }
         }
 
@@ -68,10 +70,26 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.ViewModels
             }
         }
 
+        public byte DefaultModuleNumber
+        {
+            get { return (byte) (device.SerialNumber >> 8); }
+        }
+
+        public byte DefaultGroupNumber
+        {
+            get { return (byte)(device.SerialNumber); }
+        }
+
         public void UpdateId()
         {
             var module = BootloaderPlugin as Module;
             module.Actions.UpdateIDActionAsync(Device, ModuleNumber, GroupNumber);
+        }
+
+        public void RestoreDefaultID()
+        {
+            var module = BootloaderPlugin as Module;
+            module.Actions.RestoreDefaultIdAsync(Device);
         }
     }
 }
