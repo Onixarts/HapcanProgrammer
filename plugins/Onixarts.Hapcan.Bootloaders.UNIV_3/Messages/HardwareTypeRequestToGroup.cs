@@ -9,7 +9,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Messages
 {
     public class HardwareTypeRequestToGroup : RequestMessage
     {
-        public HardwareTypeRequestToGroup() : base((short)Module.FrameType.HardwareType)
+        public HardwareTypeRequestToGroup() : base((short)Module.FrameType.HardwareTypeMessageToGroup)
         {
             RequestedModuleNumber = 0;
         }

@@ -37,6 +37,9 @@ namespace HapcanProgrammer.ViewModels
         [Import]
         public DeviceListViewModel DeviceListViewModel { get; set; }
 
+        [Import]
+        public DeviceViewModel DeviceViewModel { get; set; }
+
         public ShellViewModel()
         {
             if (Execute.InDesignMode)
@@ -46,6 +49,7 @@ namespace HapcanProgrammer.ViewModels
             }
             FillTestData();
 
+            
             SetupLayout();
         }
 
@@ -185,7 +189,7 @@ namespace HapcanProgrammer.ViewModels
             }
         }
 
-        private ExpandedView expandedView = ExpandedView.Messages;
+        private ExpandedView expandedView = ExpandedView.Module;
 
         public void ExpandDevicesView()
         {
@@ -210,14 +214,14 @@ namespace HapcanProgrammer.ViewModels
             switch (expandedView)
             {
                 case ExpandedView.Devices:
-                    DevicesColumnWidth = new GridLength(9, GridUnitType.Star);
+                    DevicesColumnWidth = new GridLength(7, GridUnitType.Star);
                     ModuleColumnWidth = new GridLength(1, GridUnitType.Star);
-                    MessagesColumnWidth = new GridLength(2, GridUnitType.Star);
+                    MessagesColumnWidth = new GridLength(4, GridUnitType.Star);
                     break;
                 case ExpandedView.Module:
                     DevicesColumnWidth = new GridLength(2, GridUnitType.Star);
-                    ModuleColumnWidth = new GridLength(9, GridUnitType.Star);
-                    MessagesColumnWidth = new GridLength(2, GridUnitType.Star);
+                    ModuleColumnWidth = new GridLength(7, GridUnitType.Star);
+                    MessagesColumnWidth = new GridLength(4, GridUnitType.Star);
                     break;
                 case ExpandedView.Messages:
                     DevicesColumnWidth = new GridLength(2, GridUnitType.Star);
@@ -227,6 +231,8 @@ namespace HapcanProgrammer.ViewModels
             }
             MessageListViewType = MessageListViewType.Compact;
             DeviceListViewType = DeviceListViewType.Compact;
+
+            //DeviceViewModel = new DeviceViewModel();
         }
         #endregion
 

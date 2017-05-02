@@ -149,5 +149,16 @@ namespace Onixarts.Hapcan.Devices
                 NotifyOfPropertyChange(() => DevicePlugin);
             }
         }
+
+        private bool isInProgrammingMode;
+        public bool IsInProgrammingMode
+        {
+            get { return isInProgrammingMode; }
+            set
+            {
+                isInProgrammingMode = value;
+                NotifyOfPropertyChange(() => IsInProgrammingMode);
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        xmlns:cal="http://www.caliburnproject.org" Width="1188" Height="594" 
+        xmlns:cal="http://www.caliburnproject.org" Width="1280" Height="720" 
         xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
         
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -48,6 +48,7 @@
             <Button x:Name="ExpandModuleView" Height="30" Width="30" Foreground="{DynamicResource TextColor}">+</Button>
         </StackPanel>
 
+        <ContentControl x:Name="DeviceViewModel" Grid.Column="3" Grid.Row="2" HorizontalContentAlignment="Stretch" />
 
 
         <StackPanel Grid.Column="5" HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal">
@@ -78,12 +79,12 @@
         <!--<Button Content="Add"
                 cal:Message.Attach="Add" />-->
 
-        <Button x:Name="button" cm:Message.Attach="[Event MouseEnter] = [Action buttonMouseEnter]" Content="Button" Grid.Column="5" HorizontalAlignment="Left"  VerticalContentAlignment="Center" Width="70.623" Height="26" VerticalAlignment="Top" Margin="0.976,-0.25,0,0"/>
+        <!--<Button x:Name="button" cm:Message.Attach="[Event MouseEnter] = [Action buttonMouseEnter]" Content="Button" Grid.Column="5" HorizontalAlignment="Left"  VerticalContentAlignment="Center" Width="70.623" Height="26" VerticalAlignment="Top" Margin="0.976,-0.25,0,0"/>-->
         <Button x:Name="About" Content="About" Grid.Column="5" HorizontalAlignment="Left" Margin="308.976,10,0,0" Height="20" VerticalAlignment="Top" />
         <StackPanel Grid.Column="1" HorizontalAlignment="Right" Grid.Row="1" Orientation="Horizontal" >
             <!--<ContentControl x:Name="DevicesButtons" />-->
-            <Button x:Name="ScanBusForDevices" Height="30" Width="30" Background="#FFDDDDDD">SC</Button>
-            <Button x:Name="ExpandDevicesView" Height="30" Width="30" Background="#FFDDDDDD">+</Button>
+            <Button x:Name="ScanBusForDevices" Height="30" Width="30">SCAN</Button>
+            <Button x:Name="ExpandDevicesView" Height="30" Width="30">+</Button>
         </StackPanel>
     </Grid>
 

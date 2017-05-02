@@ -47,5 +47,7 @@ namespace Onixarts.Hapcan.Relays.UNIV_3_2
                 return null;// new[] { new MenuItem() { DisplayName = "Reset Device" } };
             }
         }
+
+        public DeviceTabViewModel SettingsTabViewModel { get { return null; } }
     }
 }

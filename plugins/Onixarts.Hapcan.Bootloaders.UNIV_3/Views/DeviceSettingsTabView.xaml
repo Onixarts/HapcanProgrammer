@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="Onixarts.Hapcan.Bootloaders.UNIV_3.Views.DeviceSettingsTabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Onixarts.Hapcan.Bootloaders.UNIV_3.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="800"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:vm="clr-namespace:Onixarts.Hapcan.Bootloaders.UNIV_3.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=vm:DeviceSettingsTabViewModel, IsDesignTimeCreatable=True}" 
+             
+             >
+    <Grid>
+        <TabControl>
+            <TabItem Header="ID and Description">
+                <StackPanel>
+                    <GroupBox x:Name="NodeId" Header="Change node ID" HorizontalAlignment="Stretch">
+                        <Grid Margin="32">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="400" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <Label Margin="0,0,10,0">Node:</Label>
+                                <TextBox Width="60" x:Name="ModuleNumber" Margin="0,0,30,0" Height="Auto" VerticalAlignment="Center" TextAlignment="Right"/>
+                                <Label Margin="0,0,10,0">Group:</Label>
+                                <TextBox Width="60" x:Name="GroupNumber" Height="Auto" VerticalAlignment="Center" TextAlignment="Right"/>
+                                
+                            </StackPanel>
+                            <Button x:Name="UpdateID" Grid.Column="1" Grid.Row="0" Content="Update" Padding="20,5"   Style="{StaticResource AccentedSquareButtonStyle}" ToolTip="Updates device's node and group number to given values"/>
+                            <Button x:Name="RestoreDefaultID" Grid.Column="1" Grid.Row="2"  Content="Restore default (5,9)"  Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Center" Padding="20,10" ToolTip="Restore default node and group values"/>
+                        </Grid>
+                        
+                        
+                    </GroupBox>
+                    <GroupBox x:Name="DescriptionGroupBox" Header="Change node description" HorizontalAlignment="Stretch">
+                        <Grid Margin="30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="400" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" x:Name="Description" VerticalAlignment="Center" Height="Auto" Width="140" MaxLength="16">nazwa</TextBox>
+                            <Button Grid.Column="1" x:Name="UpdateDescription" Content="Update"  Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Padding="20,10" ToolTip="Updates node name (max 16 chars)"/>
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+            <TabItem IsEnabled="False" Header="Firmware update"></TabItem>
+            <TabItem IsEnabled="False" Header="Config backup"></TabItem>
+            
+        </TabControl>
+    </Grid>
+</UserControl>

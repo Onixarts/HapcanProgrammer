@@ -24,7 +24,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
         [Import]
         HapcanManager HapcanManager { get { return hapcanManager; } set { hapcanManager = value; Actions.HapcanManager = value; } }
 
-        private Actions Actions { get; } = new Actions();
+        internal Actions Actions { get; } = new Actions();
 
         public Module()
         {
@@ -43,7 +43,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             EnterProgrammingMode = 0x100,
             RebootMessageToGroup = 0x101,
             RebootMessageToNode = 0x102,
-            HardwareType = 0x103,
+            HardwareTypeMessageToGroup = 0x103,
             HardwareTypeMessageToNode = 0x104,
             FirmwareTypeMessageToGroup = 0x105,
             FirmwareTypeMessageToNode = 0x106,
@@ -71,18 +71,18 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             switch((FrameType)frame.Type)
             {
                 case FrameType.Empty: break;
-                case FrameType.ExitAllFromBootloaderProgrammingMode: break;
-                case FrameType.ExitOneNodeFromBootloaderProgrammingMode: break;
-                case FrameType.AddressFrame: break;
-                case FrameType.DataFrame: break;
-                
+                case FrameType.ExitAllFromBootloaderProgrammingMode: return new Messages.ExitProgrammingModeRequestToAll(frame);
+                case FrameType.ExitOneNodeFromBootloaderProgrammingMode: return new Messages.ExitProgrammingModeRequestToNode(frame);
+                case FrameType.AddressFrame: if (frame.IsResponse) return new Messages.AddressFrameResponseForNode(frame); else return new Messages.AddressFrameRequestToNode(frame);
+                case FrameType.DataFrame: if (frame.IsResponse) return new Messages.DataFrameResponseForNode(frame); else return new Messages.DataFrameRequestToNode(frame);
+
                 case FrameType.ErrorFrame: break;
                 
-                case FrameType.EnterProgrammingMode: break;
+                case FrameType.EnterProgrammingMode: if (frame.IsResponse) return new Messages.EnterProgrammingModeResponse(frame); else return new Messages.EnterProgrammingModeRequestToNode(frame);
                 case FrameType.RebootMessageToGroup: break;
                 case FrameType.RebootMessageToNode: return new Messages.RebootRequestToNode(frame);
-                case FrameType.HardwareType: if (frame.IsResponse) return new Messages.HardwareTypeResponse(frame); else return new Messages.HardwareTypeRequestToGroup(frame);
-                case FrameType.HardwareTypeMessageToNode: break;
+                case FrameType.HardwareTypeMessageToGroup: if (frame.IsResponse) return new Messages.HardwareTypeResponseForGroup(frame); else return new Messages.HardwareTypeRequestToGroup(frame);
+                case FrameType.HardwareTypeMessageToNode: if (frame.IsResponse) return new Messages.HardwareTypeResponseForNode(frame); else return new Messages.HardwareTypeRequestToNode(frame);
                 case FrameType.FirmwareTypeMessageToGroup: if (frame.IsResponse) return new Messages.FirmwareTypeResponse(frame); else return new Messages.FirmwareTypeRequestToGroup(frame);
                 case FrameType.FirmwareTypeMessageToNode: if (frame.IsResponse) return new Messages.FirmwareTypeResponse(frame); else return new Messages.FirmwareTypeRequestToNode(frame);
                 case FrameType.SetDefaultNodeAndGroupRequestToNode: break;
@@ -107,12 +107,11 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
         //var matchedPlugin = HapcanDevicePlugins.Select(d => d).Where(d => d.HardwareType == HardwareType && d.HardwareVersion == HardwareVersion).FirstOrDefault();
 
-
         public bool HandleMessage(Message msg)
         {
-            if(msg is Messages.HardwareTypeResponse)
+            if(msg is Messages.HardwareTypeResponseForGroup)
             {
-                var message = msg as Messages.HardwareTypeResponse;
+                var message = msg as Messages.HardwareTypeResponseForGroup;
                 var device = HapcanManager.Devices.Select(d => d).Where(d => d.SerialNumber == message.SerialNumber).FirstOrDefault();
                 if (device == null)
                 {
@@ -124,9 +123,28 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                         //TODO reszta danych modułu
                     };
 
+                    
                     HapcanManager.Devices.Add(newDevice);
                 }
+                else
+                {
+                    device.IsInProgrammingMode = false;
+                }
                 return true;
+            }
+
+            if (msg is Messages.HardwareTypeResponseForNode)
+            {
+                var message = msg as Messages.HardwareTypeResponseForNode;
+                var device = HapcanManager.Devices.Select(d => d).Where(d => d.SerialNumber == message.SerialNumber).FirstOrDefault();
+                if (device != null)
+                {
+                    device.IsInProgrammingMode = false;
+                    // update ID in case it has been changed
+                    device.ModuleNumber = message.Frame.ModuleNumber;
+                    device.GroupNumber = message.Frame.GroupNumber;
+                }
+                Actions.ProgrammingFlow?.MessageReceive(message);
             }
 
             if (msg is Messages.FirmwareTypeResponse)
@@ -166,6 +184,42 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 return true;
             }
 
+            if (msg is Messages.EnterProgrammingModeResponse)
+            {
+                var message = msg as Messages.EnterProgrammingModeResponse;
+                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
+                if (device != null)
+                {
+                    device.IsInProgrammingMode = true;
+                    Actions.ProgrammingFlow?.MessageReceive(message);
+                }
+                return true;
+            }
+
+            if (msg is Messages.AddressFrameResponseForNode)
+            {
+                var message = msg as Messages.AddressFrameResponseForNode;
+                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
+                if (device != null)
+                {
+                    device.IsInProgrammingMode = true;
+                    Actions.ProgrammingFlow?.MessageReceive(message);
+                }
+                return true;
+            }
+
+            if (msg is Messages.DataFrameResponseForNode)
+            {
+                var message = msg as Messages.DataFrameResponseForNode;
+                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
+                if (device != null)
+                {
+                    device.IsInProgrammingMode = true;
+                    Actions.ProgrammingFlow?.MessageReceive(message);
+                }
+                return true;
+            }
+
             return false;
         }
 
@@ -176,7 +230,8 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             
             await Task.Run(() =>
             {
-                //TODO: exitAllfromProgrammingMode
+                var msg = new Messages.ExitProgrammingModeRequestToAll();
+                HapcanManager.Connector.Send(msg);
                 Task.Delay(1000);
             });
 
@@ -220,7 +275,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
             // power request 0x10b
 
-
+            // search for plugin for devices
             await Task.Run(() =>
             {
                 //Thread.Sleep(1000);
@@ -241,8 +296,11 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
         {
             get
             {
-                return new[] { new MenuItem() { DisplayName = "Reset device", Action = Actions.RebootAction }};
+                return new[] { new MenuItem() { DisplayName = "Reboot device", Action = Actions.RebootAction }};
             }
         }
+
+        DeviceTabViewModel deviceTabViewModel;
+        public DeviceTabViewModel SettingsTabViewModel { get { if (deviceTabViewModel == null) deviceTabViewModel = new ViewModels.DeviceSettingsTabViewModel(); return deviceTabViewModel; } }
     }
 }

@@ -13,8 +13,10 @@ namespace Onixarts.Hapcan
 {
     [Export(typeof(HapcanManager))]
     public class HapcanManager 
-        : IHandle<Communication.ReceivedEvent>
+        : PropertyChangedBase
+        , IHandle<Communication.ReceivedEvent>
         , IHandle<Communication.SentEvent>
+        
     {
         private readonly IEventAggregator events;
 
@@ -29,6 +31,27 @@ namespace Onixarts.Hapcan
 
         [ImportMany]
         public IEnumerable<IDevicePlugin> DevicePlugins { get; set; }
+
+
+        public IDevicePlugin FindBootloaderPlugin(short hardwareType, byte hardwareVersion)
+        {
+            return DevicePlugins.Where(p => p.HardwareType == hardwareType
+                   && p.HardwareVersion == hardwareVersion
+                   && p.ApplicationType == 0).FirstOrDefault();
+            
+        }
+
+        //private DeviceBase currentDevice;
+        //public DeviceBase CurrentDevice
+        //{
+        //    get { return currentDevice; }
+        //    set
+        //    {
+        //        currentDevice = value;
+        //        NotifyOfPropertyChange(() => CurrentDevice);
+        //    }
+        //}
+
 
         [ImportingConstructor]
         public HapcanManager(IEventAggregator events)
@@ -86,10 +109,10 @@ namespace Onixarts.Hapcan
             if (msg == null)
                 msg = new Messages.Message(frame);
 
+            Messages.Insert(0, msg);
+
             if (devicePlugin != null)
                 devicePlugin.HandleMessage(msg);
-
-            Messages.Insert(0, msg);
         }
 
         // TODO: move to plugin?

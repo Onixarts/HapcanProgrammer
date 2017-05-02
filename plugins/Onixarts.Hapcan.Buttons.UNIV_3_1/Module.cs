@@ -68,5 +68,7 @@ namespace Onixarts.Hapcan.Buttons.UNIV_3_1
             }
         }
 
+        public DeviceTabViewModel SettingsTabViewModel { get { return null; } }
+
     }
 }

@@ -8,18 +8,18 @@
     <SolidColorBrush x:Key="Background2" Color="#FF585E64"/>
     <Color x:Key="BackgroundColor">#FF252525</Color>
 
-    <Color x:Key="Accent1Color">#FF508561</Color>
+    <Color x:Key="Accent1Color">#FF7A5A5A</Color>
     <Color x:Key="Accent2Color">#FF508561</Color>
-    <Color x:Key="Accent3Color">#FF508561</Color>
+    <Color x:Key="Accent3Color">#FF507085</Color>
 
-    <SolidColorBrush x:Key="Accent1Brush" Color="{StaticResource Accent1Color}"/>
+    <SolidColorBrush x:Key="Accent1Brush" Color="{DynamicResource Accent1Color}"/>
     <SolidColorBrush x:Key="Accent2Brush" Color="{StaticResource Accent2Color}"/>
     <SolidColorBrush x:Key="Accent3Brush" Color="{StaticResource Accent3Color}"/>
 
     <!--<Style x:Key="ButtonsStyle" TargetType="Button">
         <Setter Property="ControlTemplate"
     </Style>-->
-    <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type Button}">
+    <!--<ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type Button}">
         <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True" CornerRadius="2" Background="{DynamicResource Background2}">
             <ContentPresenter TextBlock.Foreground="{StaticResource TextColor}" x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
         </Border>
@@ -29,13 +29,13 @@
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Opacity" Value="1"/>
-                <!--<Setter Property="Background" TargetName="border" Value="#FFBEE6FD"/>-->
-                <!--<Setter Property="BorderBrush" TargetName="border" Value="#FF3C7FB1"/>-->
+                --><!--<Setter Property="Background" TargetName="border" Value="#FFBEE6FD"/>-->
+                <!--<Setter Property="BorderBrush" TargetName="border" Value="#FF3C7FB1"/>--><!--
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Opacity" Value="9"/>
-                <!--<Setter Property="Background" TargetName="border" Value="#FFC4E5F6"/>
-                <Setter Property="BorderBrush" TargetName="border" Value="#FF2C628B"/>-->
+                --><!--<Setter Property="Background" TargetName="border" Value="#FFC4E5F6"/>
+                <Setter Property="BorderBrush" TargetName="border" Value="#FF2C628B"/>--><!--
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="True">
                 <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
@@ -47,7 +47,7 @@
                 <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="#FF838383"/>
             </Trigger>
         </ControlTemplate.Triggers>
-    </ControlTemplate>
+    </ControlTemplate>-->
     
     <SolidColorBrush x:Key="ListBox.Static.Background" Color="#FFBB7373"/>
     <SolidColorBrush x:Key="ListBox.Static.Border" Color="#FF5F6989"/>
@@ -56,17 +56,17 @@
 
 
 
-    <Style TargetType="{x:Type Button}">
+    <!--<Style TargetType="{x:Type Button}">
         <Setter Property="Background" Value="{StaticResource Background2}" />
         <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
         <Setter Property="Template" Value="{StaticResource ButtonBaseControlTemplate1}" />
-        <!--<Setter Property="Opacity" Value="0.7"/>-->
+        --><!--<Setter Property="Opacity" Value="0.7"/>-->
         <!--<Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Opacity" Value="1"/>
             </Trigger>
-        </Style.Triggers>-->
-    </Style>
+        </Style.Triggers>--><!--
+    </Style>-->
 
     <Style TargetType="{x:Type GridSplitter}">
         <Setter Property="Background">

@@ -8,13 +8,13 @@ using System.ComponentModel.Composition;
 
 namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Messages
 {
-    public class HardwareTypeResponse : ResponseMessage
+    public class HardwareTypeResponseForNode : ResponseMessage
     {
-        public HardwareTypeResponse() : base((short)Module.FrameType.HardwareType)
+        public HardwareTypeResponseForNode() : base((short)Module.FrameType.HardwareTypeMessageToNode)
         {
         }
 
-        public HardwareTypeResponse(Frame frame) : base(frame)
+        public HardwareTypeResponseForNode(Frame frame) : base(frame)
         {
         }
 
@@ -57,12 +57,8 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Messages
             }
         }
 
-
-
-        //TODO: HardwareVersion wziąć z pluginów
         public override string ToString()
         {
-            //HapcanManager.HapcanDevicePlugins.FirstOrDefault
             return string.Format("Hardware type response: Type: 0x{0:X4}, HVers: {1}, ID: 0x{2:X8}",
                 HardwareType,
                 HardwareVersion,

@@ -15,5 +15,7 @@ namespace Onixarts.Hapcan.Devices
         bool HandleMessage(Message msg);
 
         IEnumerable<MenuItem> DevicesListContextMenuItems { get; }
+
+        DeviceTabViewModel SettingsTabViewModel { get; }
     }
 }

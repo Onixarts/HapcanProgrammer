@@ -16,7 +16,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border>
-                        <TextBlock Foreground="{DynamicResource Accent2Brush}" >
+                        <TextBlock Foreground="{DynamicResource Accent2Brush}" Padding="4">
                             <Run Text="{Binding Description}" Foreground="{DynamicResource TextColor}" /> 
                             (<Run Text="{Binding ModuleNumber}" />, <Run Text="{Binding GroupNumber}" />)
                             <Run Text="{Binding HardwareVersion}" />.<Run Text="{Binding ApplicationType}" />.<Run Text="{Binding ApplicationVersion}" />.<Run Text="{Binding FirmwareVersion}" />
@@ -26,6 +26,9 @@
                                         <DataTrigger Binding="{Binding DevicePlugin}" Value="{x:Null}">
                                             <Setter Property="TextBlock.Opacity" Value="0.6"/>
                                             <Setter Property="TextBlock.ToolTip" Value="Plugin for device not found" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsInProgrammingMode}" Value="True">
+                                            <Setter Property="TextBlock.Background" Value="Yellow" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

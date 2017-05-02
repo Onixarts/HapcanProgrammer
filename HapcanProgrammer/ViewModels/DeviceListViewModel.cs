@@ -15,6 +15,8 @@ namespace HapcanProgrammer.ViewModels
     public class DeviceListViewModel : Screen
     {
 
+        private readonly IEventAggregator events;
+
         [Import]
         public BindableCollection<DeviceBase> Devices { get; set; }
 
@@ -31,6 +33,7 @@ namespace HapcanProgrammer.ViewModels
                 {
                     selectedDevice = value;
                     CreateContextMenuForSelectedItem();
+                    events.PublishOnUIThread(selectedDevice);
                 }
                 NotifyOfPropertyChange(() => SelectedDevice);
             }
@@ -41,16 +44,24 @@ namespace HapcanProgrammer.ViewModels
         [Import]
         HapcanManager HapcanManager { get; set; }
 
+        [ImportingConstructor]
+        public DeviceListViewModel(IEventAggregator events)
+        {
+            this.events = events;
+
+            DeviceContextMenuItems = new BindableCollection<MenuItem>();
+        }
+
         public DeviceListViewModel()
         {
-            if( Execute.InDesignMode)
+            if (Execute.InDesignMode)
             {
                 Devices = new BindableCollection<DeviceBase>()
                 {
                     new DeviceBase() { Description="dev1", GroupNumber=1, ModuleNumber=2,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3, ApplicationType=0x02, ApplicationVersion=0,  },
                     new DeviceBase() { Description="device2", GroupNumber=1, ModuleNumber=3,SerialNumber=123234,HardwareType=0x3000, HardwareVersion=3, ApplicationType=0x01, ApplicationVersion=0 },
                     new DeviceBase() { Description="device3", GroupNumber=1, ModuleNumber=4,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3,ApplicationType=0x02, ApplicationVersion=0 },
-                    new DeviceBase() { Description="device444", GroupNumber=1, ModuleNumber=5,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3,ApplicationType=0x03, ApplicationVersion=0 },
+                    new DeviceBase() { Description="device444", GroupNumber=1, ModuleNumber=5,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3,ApplicationType=0x03, ApplicationVersion=0, IsInProgrammingMode=true },
                     new DeviceBase() { Description="buttons5", GroupNumber=2, ModuleNumber=1,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3,ApplicationType=0x02, ApplicationVersion=0 },
                     new DeviceBase() { Description="device6", GroupNumber=2, ModuleNumber=2,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3,ApplicationType=0x03, ApplicationVersion=0 },
                     new DeviceBase() { Description="testdevice", GroupNumber=3, ModuleNumber=3,SerialNumber=123234, HardwareType=0x3000, HardwareVersion=3,ApplicationType=0x04, ApplicationVersion=0 },
@@ -58,8 +69,6 @@ namespace HapcanProgrammer.ViewModels
                     new DeviceBase() { Description="device9", GroupNumber=4, ModuleNumber=4,SerialNumber=123234,HardwareType=0x3000, HardwareVersion=3, ApplicationType=0x05, ApplicationVersion=0 },
                 };
             }
-
-            DeviceContextMenuItems = new BindableCollection<MenuItem>();
         }
 
         private void CreateContextMenuForSelectedItem()
@@ -67,11 +76,7 @@ namespace HapcanProgrammer.ViewModels
             if (selectedDevice != null)
             {
                 DeviceContextMenuItems.Clear();
-
-                var bootloaderPlugin = HapcanManager.DevicePlugins.Where(p => p.HardwareType == selectedDevice.HardwareType
-                                   && p.HardwareVersion == selectedDevice.HardwareVersion
-                                   && p.ApplicationType == 0).FirstOrDefault();
-
+                var bootloaderPlugin = HapcanManager.FindBootloaderPlugin(selectedDevice.HardwareType, selectedDevice.HardwareVersion);
                 DeviceContextMenuItems.AddRange(bootloaderPlugin?.DevicesListContextMenuItems);
             }
 

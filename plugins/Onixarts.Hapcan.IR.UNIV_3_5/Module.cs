@@ -49,5 +49,7 @@ namespace Onixarts.Hapcan.IR.UNIV_3_5
             }
         }
 
+        public DeviceTabViewModel SettingsTabViewModel { get { return null; } }
+
     }
 }
