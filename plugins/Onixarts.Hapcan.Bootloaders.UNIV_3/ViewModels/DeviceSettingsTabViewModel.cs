@@ -89,7 +89,13 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.ViewModels
         public void RestoreDefaultID()
         {
             var module = BootloaderPlugin as Module;
-            module.Actions.RestoreDefaultIdAsync(Device);
+            module.Actions.RestoreDefaultIdAsync(Device, DefaultModuleNumber, DefaultGroupNumber);
+        }
+
+        public void UpdateDescription()
+        {
+            var module = BootloaderPlugin as Module;
+            module.Actions.UpdateDescriptionAsync(Device, Description);
         }
     }
 }

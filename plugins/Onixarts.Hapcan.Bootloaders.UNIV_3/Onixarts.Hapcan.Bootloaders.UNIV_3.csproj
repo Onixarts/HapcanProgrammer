@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions.cs" />
+    <Compile Include="Flows\RestoreDefaultIDFlow.cs" />
     <Compile Include="Messages\DataFrameResponseForNode.cs" />
     <Compile Include="Messages\DataFrameRequestToNode.cs" />
     <Compile Include="Messages\AddressFrameRequestToNode.cs" />

@@ -22,7 +22,10 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Messages
         {
             get
             {
-                return Encoding.ASCII.GetString(Frame.RawData, 5, 8).Trim(new[] { '\0' });
+                var descriptionWin1250 = new byte[8];
+                Array.Copy(Frame.RawData, 5, descriptionWin1250, 0, 8);
+                var description = Encoding.Convert(Encoding.GetEncoding(1250), Encoding.Unicode, descriptionWin1250);
+                return Encoding.Unicode.GetString(description).Trim(new[] { '\0' });
             }
             set
             {

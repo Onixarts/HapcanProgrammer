@@ -7,18 +7,14 @@ using System.Threading.Tasks;
 
 namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
 {
-    public class ProgrammingFlow
+    public class ProgrammingFlow : Extensions.BaseFlow
     {
-        public HapcanManager HapcanManager
+        public ProgrammingFlow(DeviceBase device, Queue<MemoryBlock> programmingData, byte extraModuleNumber = 0, byte extraGroupNumber = 0)
+            : base(device)
         {
-            get
-            {
-                return IoC.Get<HapcanManager>();
-            }
-        }
-
-        public ProgrammingFlow()
-        {
+            ProgrammingData = programmingData;
+            ExtraModuleNumber = extraModuleNumber;
+            ExtraGroupNumber = extraGroupNumber;
         }
 
         private Queue<MemoryBlock> ProgrammingData { get; set; }
@@ -26,18 +22,16 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         byte ExtraModuleNumber { get; set; }
         byte ExtraGroupNumber { get; set; }
 
-        DeviceBase CurrentDevice { get; set; }
+        
         bool DeviceEnteredProgrammingMode { get; set; }
         bool ReceivedAddressFrameACKMessage { get; set; }
         bool ReceivedDataFrameACKMessage { get; set; }
         bool ReceivedHardwareTypeResponseMessage { get; set; }
 
-        Hapcan.Messages.Message SentMessage { get; set; }
-
-        public void MessageReceive(Hapcan.Messages.Message receivedMessage)
+        public override void MessageReceived(Hapcan.Messages.Message receivedMessage)
         {
             // check if this message is for current device (or updated ID device)
-            if ( (receivedMessage.Frame.GroupNumber != CurrentDevice.GroupNumber || receivedMessage.Frame.ModuleNumber != CurrentDevice.ModuleNumber )
+            if ( (receivedMessage.Frame.GroupNumber != Device.GroupNumber || receivedMessage.Frame.ModuleNumber != Device.ModuleNumber )
                 && (ExtraGroupNumber != receivedMessage.Frame.GroupNumber || ExtraModuleNumber != receivedMessage.Frame.ModuleNumber) )
                 return;
 
@@ -73,78 +67,71 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
             }
         }
 
-        public async Task StartAsync(DeviceBase device, Queue<MemoryBlock> programmingData, byte extraModuleNumber = 0, byte extraGroupNumber = 0)
+        public override void Run()
         {
-            await Task.Run(() =>
+            try
             {
-                try
+
+                // TODO: repeat sending 3 times
+                EnterProgrammingMode();
+                WaitForEnterToProgrammingMode();
+
+                //TODO: check bootloader/firmware
+
+                // sendind data loop
+                while (ProgrammingData.Count > 0)
                 {
-                    CurrentDevice = device;
-                    ProgrammingData = programmingData;
-                    ExtraModuleNumber = extraModuleNumber;
-                    ExtraGroupNumber = extraGroupNumber;
+                    ReceivedAddressFrameACKMessage = false;
+                    CurrentMemoryBlock = ProgrammingData.Dequeue();
+                    int retryCounter = 3;
 
-                    // TODO: repeat sending 3 times
-                    EnterProgrammingMode();
-                    WaitForEnterToProgrammingMode();
-
-                    //TODO: check bootloader/firmware
-
-                    // sendind data loop
-                    while (ProgrammingData.Count > 0)
+                    do
                     {
-                        ReceivedAddressFrameACKMessage = false;
-                        CurrentMemoryBlock = ProgrammingData.Dequeue();
-                        int retryCounter = 3;
+                        SendAddressFrame();
+                        retryCounter--;
+                    } while (!AddressFrameACKReceived() && retryCounter > 0);
 
-                        do
-                        {
-                            SendAddressFrame();
-                            retryCounter--;
-                        } while (!AddressFrameACKReceived() && retryCounter > 0);
+                    if (retryCounter == 0)
+                        throw new Exception("Device not responding to address frame or bad answers");
 
-                        if (retryCounter == 0)
-                            throw new Exception("Device not responding to address frame or bad answers");
+                    ReceivedDataFrameACKMessage = false;
+                    retryCounter = 3;
 
-                        ReceivedDataFrameACKMessage = false;
-                        retryCounter = 3;
+                    do
+                    {
+                        SendDataFrame();
+                        retryCounter--;
+                    } while (!DataFrameACKReceived() && retryCounter > 0);
 
-                        do
-                        {
-                            SendDataFrame();
-                            retryCounter--;
-                        } while (!DataFrameACKReceived() && retryCounter > 0);
-
-                        if (retryCounter == 0)
-                            throw new Exception("Device not responding to data frame or bad answers");
-                    }
+                    if (retryCounter == 0)
+                        throw new Exception("Device not responding to data frame or bad answers");
                 }
-                catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show(e.Message);
-                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.Message);
+            }
 
-                bool moduleRestared = false;
+            bool moduleRestared = false;
 
-                ExitProgrammingMode(CurrentDevice.ModuleNumber, CurrentDevice.GroupNumber);
-                Thread.Sleep(1000);
+            ExitProgrammingMode(Device.ModuleNumber, Device.GroupNumber);
+            Thread.Sleep(1000);
 
-                // in case module has changed ID, ping this new module ID
-                if (ExtraModuleNumber != 0 && ExtraGroupNumber != 0)
-                {
-                    moduleRestared = PingDevice(ExtraModuleNumber, ExtraGroupNumber);
-                }
+            // in case module has changed ID, ping this new module ID
+            if (ExtraModuleNumber != 0 && ExtraGroupNumber != 0)
+            {
+                moduleRestared = PingDevice(ExtraModuleNumber, ExtraGroupNumber);
+            }
 
-                if( !moduleRestared )
-                    moduleRestared = PingDevice(CurrentDevice.ModuleNumber, CurrentDevice.GroupNumber);
-            });
+            if( !moduleRestared )
+                moduleRestared = PingDevice(Device.ModuleNumber, Device.GroupNumber);
         }
 
         void EnterProgrammingMode()
         {
             var msg = new Messages.EnterProgrammingModeRequestToNode();
-            msg.RequestedModuleNumber = CurrentDevice.ModuleNumber;
-            msg.RequestedGroupNumber = CurrentDevice.GroupNumber;
+            msg.RequestedModuleNumber = Device.ModuleNumber;
+            msg.RequestedGroupNumber = Device.GroupNumber;
 
             HapcanManager.Connector.Send(msg);
         }
@@ -190,12 +177,12 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         {
             if (CurrentMemoryBlock == null)
                 throw new ArgumentException("Missing data block");
-            if (CurrentDevice == null)
+            if (Device == null)
                 throw new ArgumentException("Programming device is null");
 
             var msg = new Messages.AddressFrameRequestToNode();
-            msg.Frame.ModuleNumber = CurrentDevice.ModuleNumber;
-            msg.Frame.GroupNumber = CurrentDevice.GroupNumber;
+            msg.Frame.ModuleNumber = Device.ModuleNumber;
+            msg.Frame.GroupNumber = Device.GroupNumber;
             msg.Address = CurrentMemoryBlock.Address;
             msg.Command = Messages.ProgrammingCommand.Write;
 
@@ -207,13 +194,13 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         {
             if (CurrentMemoryBlock == null)
                 throw new ArgumentException("Missing data block");
-            if (CurrentDevice == null)
+            if (Device == null)
                 throw new ArgumentException("Programming device is null");
 
 
             var msg = new Messages.DataFrameRequestToNode();
-            msg.Frame.ModuleNumber = CurrentDevice.ModuleNumber;
-            msg.Frame.GroupNumber = CurrentDevice.GroupNumber;
+            msg.Frame.ModuleNumber = Device.ModuleNumber;
+            msg.Frame.GroupNumber = Device.GroupNumber;
             byte index = 0;
             foreach (var byteData in CurrentMemoryBlock.Data)
             {
@@ -241,7 +228,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
             {
                 try
                 {
-                    CurrentDevice = device;
+                    Device = device;
                     ExtraModuleNumber = extraModuleNumber;
                     ExtraGroupNumber = extraGroupNumber;
 

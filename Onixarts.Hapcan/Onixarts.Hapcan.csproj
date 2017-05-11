@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Communication\EthernetConnector.cs" />
+    <Compile Include="Extensions\BaseFlow.cs" />
     <Compile Include="HapcanManager.cs" />
     <Compile Include="Messages\Frame.cs" />
     <Compile Include="Devices\IDevicePlugin.cs" />

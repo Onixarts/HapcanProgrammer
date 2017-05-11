@@ -144,7 +144,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                     device.ModuleNumber = message.Frame.ModuleNumber;
                     device.GroupNumber = message.Frame.GroupNumber;
                 }
-                Actions.ProgrammingFlow?.MessageReceive(message);
+                Actions.ProgrammingFlow?.MessageReceived(message);
             }
 
             if (msg is Messages.FirmwareTypeResponse)
@@ -191,7 +191,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 if (device != null)
                 {
                     device.IsInProgrammingMode = true;
-                    Actions.ProgrammingFlow?.MessageReceive(message);
+                    Actions.ProgrammingFlow?.MessageReceived(message);
                 }
                 return true;
             }
@@ -203,7 +203,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 if (device != null)
                 {
                     device.IsInProgrammingMode = true;
-                    Actions.ProgrammingFlow?.MessageReceive(message);
+                    Actions.ProgrammingFlow?.MessageReceived(message);
                 }
                 return true;
             }
@@ -215,10 +215,26 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 if (device != null)
                 {
                     device.IsInProgrammingMode = true;
-                    Actions.ProgrammingFlow?.MessageReceive(message);
+                    Actions.ProgrammingFlow?.MessageReceived(message);
                 }
                 return true;
             }
+
+            if (msg is Messages.SetDefaultNodeAndGroupResponse)
+            {
+                var message = msg as Messages.SetDefaultNodeAndGroupResponse;
+                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
+                if (device != null)
+                {
+                    device.IsInProgrammingMode = false;
+                    Actions.RestoreDefaultIDFlow?.MessageReceived(message);
+                }
+
+                Actions.RestoreDefaultIDFlow?.MessageReceived(message);
+
+                return true;
+            }
+
 
             return false;
         }
@@ -226,7 +242,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
         [Export(typeof(Func<int,Task>))]
         public async Task ScanBusForDevices(int asd)
         {
-            const int rangeTo = 255;
+            const int rangeTo = 10;
             
             await Task.Run(() =>
             {
@@ -237,7 +253,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
             await Task.Run(() =>
             {
-                for (int i = 1; i < rangeTo; i++)
+                for (int i = 200; i < 210; i++)
                 {
                     var msg = new Messages.HardwareTypeRequestToGroup();
                     msg.RequestedGroupNumber = (byte)i;
