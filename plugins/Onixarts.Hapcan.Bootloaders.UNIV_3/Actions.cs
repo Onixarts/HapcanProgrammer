@@ -125,15 +125,11 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
         public async void RestoreDefaultIdAsync(DeviceBase device, byte moduleNumber, byte groupNumber)
         {
-            //TODO: AAAA osobne flowy porobić i usunąc klase Actions. Zobaczyć czy da się RebotAction jakoś przenieść
-            //var msg = new Messages.SetDefaultNodeAndGroupRequestToNode();
-            //msg.RequestedModuleNumber = device.ModuleNumber;
-            //msg.RequestedGroupNumber = device.GroupNumber;
-            //HapcanManager.Connector.Send(msg);
             RestoreDefaultIDFlow = new Flows.RestoreDefaultIDFlow(device, moduleNumber, groupNumber);
-            await RestoreDefaultIDFlow.RunAsync();
-
-        //    await new Flows.ProgrammingFlow().PingDeviceAsync(device, (byte)(device.SerialNumber >> 8), (byte)device.SerialNumber);
+            await RestoreDefaultIDFlow.RunAsync().ContinueWith((task) =>
+            {
+                RestoreDefaultIDFlow = null;
+            });
         }
 
     }

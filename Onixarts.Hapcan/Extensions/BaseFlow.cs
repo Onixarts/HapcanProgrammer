@@ -40,7 +40,7 @@ namespace Onixarts.Hapcan.Extensions
 
         protected Messages.Message SentMessage { get; set; }
 
-        public abstract void MessageReceived(Messages.Message receivedMessage);
+        public abstract bool HandleMessage(Messages.Message receivedMessage);
 
         protected int RetryCounter { get; set; }
         protected int Timeout { get; set; }

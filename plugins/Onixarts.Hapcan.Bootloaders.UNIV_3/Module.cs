@@ -107,7 +107,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
         //var matchedPlugin = HapcanDevicePlugins.Select(d => d).Where(d => d.HardwareType == HardwareType && d.HardwareVersion == HardwareVersion).FirstOrDefault();
 
-        public bool HandleMessage(Message msg)
+        public void HandleMessage(Message msg)
         {
             if(msg is Messages.HardwareTypeResponseForGroup)
             {
@@ -130,21 +130,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                 {
                     device.IsInProgrammingMode = false;
                 }
-                return true;
-            }
-
-            if (msg is Messages.HardwareTypeResponseForNode)
-            {
-                var message = msg as Messages.HardwareTypeResponseForNode;
-                var device = HapcanManager.Devices.Select(d => d).Where(d => d.SerialNumber == message.SerialNumber).FirstOrDefault();
-                if (device != null)
-                {
-                    device.IsInProgrammingMode = false;
-                    // update ID in case it has been changed
-                    device.ModuleNumber = message.Frame.ModuleNumber;
-                    device.GroupNumber = message.Frame.GroupNumber;
-                }
-                Actions.ProgrammingFlow?.MessageReceived(message);
+                return;
             }
 
             if (msg is Messages.FirmwareTypeResponse)
@@ -165,7 +151,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                     // nie ma takiego urządzenia na liście
                     // TODO: dodać?
                 }
-                return true;
+                return;
             }
 
             if( msg is Messages.DescriptionResponse)
@@ -181,62 +167,15 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
                     // nie ma takiego urządzenia na liście
                     // TODO: dodać?
                 }
-                return true;
-            }
-
-            if (msg is Messages.EnterProgrammingModeResponse)
-            {
-                var message = msg as Messages.EnterProgrammingModeResponse;
-                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
-                if (device != null)
-                {
-                    device.IsInProgrammingMode = true;
-                    Actions.ProgrammingFlow?.MessageReceived(message);
-                }
-                return true;
-            }
-
-            if (msg is Messages.AddressFrameResponseForNode)
-            {
-                var message = msg as Messages.AddressFrameResponseForNode;
-                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
-                if (device != null)
-                {
-                    device.IsInProgrammingMode = true;
-                    Actions.ProgrammingFlow?.MessageReceived(message);
-                }
-                return true;
-            }
-
-            if (msg is Messages.DataFrameResponseForNode)
-            {
-                var message = msg as Messages.DataFrameResponseForNode;
-                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
-                if (device != null)
-                {
-                    device.IsInProgrammingMode = true;
-                    Actions.ProgrammingFlow?.MessageReceived(message);
-                }
-                return true;
-            }
-
-            if (msg is Messages.SetDefaultNodeAndGroupResponse)
-            {
-                var message = msg as Messages.SetDefaultNodeAndGroupResponse;
-                var device = HapcanManager.Devices.Where(d => d.GroupNumber == message.Frame.GroupNumber && d.ModuleNumber == message.Frame.ModuleNumber).Select(d => d).FirstOrDefault();
-                if (device != null)
-                {
-                    device.IsInProgrammingMode = false;
-                    Actions.RestoreDefaultIDFlow?.MessageReceived(message);
-                }
-
-                Actions.RestoreDefaultIDFlow?.MessageReceived(message);
-
-                return true;
+                return;
             }
 
 
-            return false;
+            if (Actions.ProgrammingFlow != null ? Actions.ProgrammingFlow.HandleMessage(msg) : false)
+                return;
+
+            if (Actions.RestoreDefaultIDFlow != null ? Actions.RestoreDefaultIDFlow.HandleMessage(msg) : false)
+                return;
         }
 
         [Export(typeof(Func<int,Task>))]

@@ -28,27 +28,32 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         bool ReceivedDataFrameACKMessage { get; set; }
         bool ReceivedHardwareTypeResponseMessage { get; set; }
 
-        public override void MessageReceived(Hapcan.Messages.Message receivedMessage)
+        public override bool HandleMessage(Hapcan.Messages.Message receivedMessage)
         {
             // check if this message is for current device (or updated ID device)
             if ( (receivedMessage.Frame.GroupNumber != Device.GroupNumber || receivedMessage.Frame.ModuleNumber != Device.ModuleNumber )
                 && (ExtraGroupNumber != receivedMessage.Frame.GroupNumber || ExtraModuleNumber != receivedMessage.Frame.ModuleNumber) )
-                return;
+                return false;
 
             if (receivedMessage is Messages.EnterProgrammingModeResponse)
+            {
                 DeviceEnteredProgrammingMode = true;
-            else if ( SentMessage is Messages.AddressFrameRequestToNode && receivedMessage is Messages.AddressFrameResponseForNode)
+                Device.IsInProgrammingMode = true;
+                return true;
+            }
+            else if (SentMessage is Messages.AddressFrameRequestToNode && receivedMessage is Messages.AddressFrameResponseForNode)
             {
                 var messageACK = receivedMessage as Messages.AddressFrameResponseForNode;
                 var sentMessage = SentMessage as Messages.AddressFrameRequestToNode;
 
                 if (messageACK.Command != sentMessage.Command)
-                    return;
+                    return false;
 
                 if (messageACK.Address != sentMessage.Address)
-                    return;
+                    return false;
 
                 ReceivedAddressFrameACKMessage = true;
+                return true;
             }
             else if (SentMessage is Messages.DataFrameRequestToNode && receivedMessage is Messages.DataFrameResponseForNode)
             {
@@ -56,15 +61,20 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
                 foreach (var byteData in CurrentMemoryBlock.Data)
                 {
                     if (receivedMessage.Frame.GetData(index) != byteData)
-                        return;
+                        return false;
                     index++;
                 }
                 ReceivedDataFrameACKMessage = true;
+                return true;
             }
             else if (SentMessage is Messages.HardwareTypeRequestToNode && receivedMessage is Messages.HardwareTypeResponseForNode)
             {
                 ReceivedHardwareTypeResponseMessage = true;
+                Device.IsInProgrammingMode = false;
+                return true;
             }
+
+            return false;
         }
 
         public override void Run()

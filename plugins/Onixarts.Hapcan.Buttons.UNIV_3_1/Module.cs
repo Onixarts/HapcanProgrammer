@@ -55,9 +55,8 @@ namespace Onixarts.Hapcan.Buttons.UNIV_3_1
             return null;
         }
 
-        public bool HandleMessage(Message msg)
+        public void HandleMessage(Message msg)
         {
-            return false;
         }
 
         public IEnumerable<MenuItem> DevicesListContextMenuItems

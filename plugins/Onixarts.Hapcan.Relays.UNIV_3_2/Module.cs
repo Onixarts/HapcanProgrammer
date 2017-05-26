@@ -35,9 +35,8 @@ namespace Onixarts.Hapcan.Relays.UNIV_3_2
             return null;
         }
 
-        public bool HandleMessage(Message msg)
+        public void HandleMessage(Message msg)
         {
-            return false;
         }
 
         public IEnumerable<MenuItem> DevicesListContextMenuItems

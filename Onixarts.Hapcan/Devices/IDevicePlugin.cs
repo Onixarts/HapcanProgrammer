@@ -12,7 +12,7 @@ namespace Onixarts.Hapcan.Devices
         byte HardwareVersion { get; }
         byte ApplicationType { get; }
 
-        bool HandleMessage(Message msg);
+        void HandleMessage(Message msg);
 
         IEnumerable<MenuItem> DevicesListContextMenuItems { get; }
 

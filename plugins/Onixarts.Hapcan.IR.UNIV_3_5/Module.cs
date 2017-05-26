@@ -36,9 +36,8 @@ namespace Onixarts.Hapcan.IR.UNIV_3_5
             return null;
         }
 
-        public bool HandleMessage(Message msg)
+        public void HandleMessage(Message msg)
         {
-            return false;
         }
 
         public IEnumerable<MenuItem> DevicesListContextMenuItems

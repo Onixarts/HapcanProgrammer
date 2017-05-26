@@ -36,9 +36,8 @@ namespace Onixarts.Hapcan.Gates.UNIV_3_102
             return null;
         }
 
-        public bool HandleMessage(Message msg)
+        public void HandleMessage(Message msg)
         {
-            return false;
         }
 
         public IEnumerable<MenuItem> DevicesListContextMenuItems

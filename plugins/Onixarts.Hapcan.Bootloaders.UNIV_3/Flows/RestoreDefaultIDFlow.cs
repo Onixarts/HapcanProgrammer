@@ -17,17 +17,20 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         protected byte DefaultModuleNumber { get; set; }
         protected byte DefaultGroupNumber { get; set; }
 
-        public override void MessageReceived(Message receivedMessage)
+        public override bool HandleMessage(Message receivedMessage)
         {
             if (receivedMessage.Frame.GroupNumber != DefaultGroupNumber || receivedMessage.Frame.ModuleNumber != DefaultModuleNumber)
-                return;
+                return false;
 
             if( SentMessage is Messages.SetDefaultNodeAndGroupRequestToNode && receivedMessage is Messages.SetDefaultNodeAndGroupResponse)
             {
                 ReceivedSetDefaultNodeAndGroupRequestACK = true;
                 Device.ModuleNumber = receivedMessage.Frame.ModuleNumber;
                 Device.GroupNumber = receivedMessage.Frame.GroupNumber;
+                return true;
             }
+
+            return false;
         }
 
         bool ReceivedSetDefaultNodeAndGroupRequestACK { get; set; }
