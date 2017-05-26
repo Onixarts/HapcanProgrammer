@@ -9,6 +9,12 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
 {
     public class ProgrammingFlow : Extensions.BaseFlow
     {
+
+        public ProgrammingFlow(DeviceBase device)
+            : base(device)
+        {
+        }
+
         public ProgrammingFlow(DeviceBase device, Queue<MemoryBlock> programmingData, byte extraModuleNumber = 0, byte extraGroupNumber = 0)
             : base(device)
         {
@@ -17,7 +23,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
             ExtraGroupNumber = extraGroupNumber;
         }
 
-        private Queue<MemoryBlock> ProgrammingData { get; set; }
+        protected Queue<MemoryBlock> ProgrammingData { get; set; }
         private MemoryBlock CurrentMemoryBlock { get; set; }
         byte ExtraModuleNumber { get; set; }
         byte ExtraGroupNumber { get; set; }
@@ -133,7 +139,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
             bool moduleRestared = false;
 
             ExitProgrammingMode(Device.ModuleNumber, Device.GroupNumber);
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
 
             // in case module has changed ID, ping this new module ID
             if (ExtraModuleNumber != 0 && ExtraGroupNumber != 0)

@@ -2,11 +2,6 @@
 using Onixarts.Hapcan.UI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 {
@@ -53,6 +48,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
         internal Flows.ProgrammingFlow ProgrammingFlow { get; set; }
         internal Flows.RestoreDefaultIDFlow RestoreDefaultIDFlow { get; set; }
+        internal Flows.ChangeDescriptionFlow ChangeDescriptionFlow { get; set; }
 
         public void RebootAction(MenuItem menuItem, object context)
         {
@@ -88,38 +84,13 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
         public async void UpdateDescriptionAsync(DeviceBase device, string description)
         {
-            if (description.Length > 16)
-                description = description.Substring(0, 16);
-
-            var descriptionWin1250 = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding(1250), Encoding.Unicode.GetBytes(description));
-
-            var programmingData = new Queue<MemoryBlock>();
-            var memoryBlock = new MemoryBlock() { Address = 0xF00030 };
-
-            for (byte i = 0; i < 8; i++)
+            ChangeDescriptionFlow = new Flows.ChangeDescriptionFlow(device, description);
+            await ChangeDescriptionFlow.RunAsync().ContinueWith((task) =>
             {
-                if (i < description.Length)
-                    memoryBlock.Data[i] = descriptionWin1250[i];
-                else
-                    memoryBlock.Data[i] = 0;
-            }
-            programmingData.Enqueue(memoryBlock);
+                device.Description = description.Length <= 8 ? description : description.Substring(0, 8);
+                device.Description = description.Length <= 8 ? "" : description.Substring(8, description.Length - 8);
 
-            memoryBlock = programmingData.AddNextBlock();
-            for (byte i = 0; i < 8; i++)
-            {
-                if (i + 8 < description.Length)
-                    memoryBlock.Data[i] = descriptionWin1250[i + 8];
-                else
-                    memoryBlock.Data[i] = 0;
-            }
-
-            ProgrammingFlow = new Flows.ProgrammingFlow(device, programmingData);
-            await ProgrammingFlow.RunAsync().ContinueWith((task) =>
-            {
-                // TODO: make this on flow?
-                device.Description = description.Length <=8 ? description : description.Substring(0,8);
-                device.Description = description.Length <=8 ? "" : description.Substring(8, description.Length-8);
+                ChangeDescriptionFlow = null;
             });
         }
 
