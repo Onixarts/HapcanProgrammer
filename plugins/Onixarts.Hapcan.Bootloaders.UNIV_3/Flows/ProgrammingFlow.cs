@@ -23,10 +23,10 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         byte ExtraGroupNumber { get; set; }
 
         
-        bool DeviceEnteredProgrammingMode { get; set; }
-        bool ReceivedAddressFrameACKMessage { get; set; }
-        bool ReceivedDataFrameACKMessage { get; set; }
-        bool ReceivedHardwareTypeResponseMessage { get; set; }
+        bool DeviceEnteredProgrammingModeACK { get; set; }
+        bool ReceivedAddressFrameMessageACK { get; set; }
+        bool ReceivedDataFrameMessageACK { get; set; }
+        bool ReceivedHardwareTypeResponseMessageACK { get; set; }
 
         public override bool HandleMessage(Hapcan.Messages.Message receivedMessage)
         {
@@ -37,7 +37,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
 
             if (receivedMessage is Messages.EnterProgrammingModeResponse)
             {
-                DeviceEnteredProgrammingMode = true;
+                DeviceEnteredProgrammingModeACK = true;
                 Device.IsInProgrammingMode = true;
                 return true;
             }
@@ -52,7 +52,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
                 if (messageACK.Address != sentMessage.Address)
                     return false;
 
-                ReceivedAddressFrameACKMessage = true;
+                ReceivedAddressFrameMessageACK = true;
                 return true;
             }
             else if (SentMessage is Messages.DataFrameRequestToNode && receivedMessage is Messages.DataFrameResponseForNode)
@@ -64,13 +64,15 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
                         return false;
                     index++;
                 }
-                ReceivedDataFrameACKMessage = true;
+                ReceivedDataFrameMessageACK = true;
                 return true;
             }
             else if (SentMessage is Messages.HardwareTypeRequestToNode && receivedMessage is Messages.HardwareTypeResponseForNode)
             {
-                ReceivedHardwareTypeResponseMessage = true;
+                ReceivedHardwareTypeResponseMessageACK = true;
                 Device.IsInProgrammingMode = false;
+                Device.ModuleNumber = receivedMessage.Frame.ModuleNumber;
+                Device.GroupNumber = receivedMessage.Frame.GroupNumber;
                 return true;
             }
 
@@ -81,40 +83,46 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         {
             try
             {
+                RetryCounter = 3;
+                do
+                {
+                    EnterProgrammingMode();
+                }
+                while (!IsAnswerMessageReceived(() => DeviceEnteredProgrammingModeACK) && --RetryCounter > 0);
 
-                // TODO: repeat sending 3 times
-                EnterProgrammingMode();
-                WaitForEnterToProgrammingMode();
+                if (RetryCounter == 0)
+                    throw new TimeoutException("Device not entered in programming mode");
+
 
                 //TODO: check bootloader/firmware
 
                 // sendind data loop
                 while (ProgrammingData.Count > 0)
                 {
-                    ReceivedAddressFrameACKMessage = false;
+                    ReceivedAddressFrameMessageACK = false;
                     CurrentMemoryBlock = ProgrammingData.Dequeue();
-                    int retryCounter = 3;
 
+                    RetryCounter = 3;
                     do
                     {
                         SendAddressFrame();
-                        retryCounter--;
-                    } while (!AddressFrameACKReceived() && retryCounter > 0);
+                    }
+                    while (!IsAnswerMessageReceived(() => ReceivedAddressFrameMessageACK) && --RetryCounter > 0);
 
-                    if (retryCounter == 0)
-                        throw new Exception("Device not responding to address frame or bad answers");
+                    if (RetryCounter == 0)
+                        throw new Exception("Device not responding to address frame or incorrect answers received");
 
-                    ReceivedDataFrameACKMessage = false;
-                    retryCounter = 3;
 
+                    ReceivedDataFrameMessageACK = false;
+                    RetryCounter = 3;
                     do
                     {
                         SendDataFrame();
-                        retryCounter--;
-                    } while (!DataFrameACKReceived() && retryCounter > 0);
+                    }
+                    while (!IsAnswerMessageReceived(() => ReceivedDataFrameMessageACK) && --RetryCounter > 0);
 
-                    if (retryCounter == 0)
-                        throw new Exception("Device not responding to data frame or bad answers");
+                    if (RetryCounter == 0)
+                        throw new Exception("Device not responding to data frame or incorrect answers received");
                 }
             }
             catch (Exception e)
@@ -130,57 +138,41 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
             // in case module has changed ID, ping this new module ID
             if (ExtraModuleNumber != 0 && ExtraGroupNumber != 0)
             {
-                moduleRestared = PingDevice(ExtraModuleNumber, ExtraGroupNumber);
+                RetryCounter = 5;
+                do
+                {
+                    SendHardwareTypeRequestToNode(ExtraModuleNumber, ExtraGroupNumber);
+                }
+                while (!IsAnswerMessageReceived(() => ReceivedHardwareTypeResponseMessageACK) && --RetryCounter > 0);
+
+                if (RetryCounter > 0)
+                    moduleRestared = true;
             }
 
             if( !moduleRestared )
-                moduleRestared = PingDevice(Device.ModuleNumber, Device.GroupNumber);
+            {
+                RetryCounter = 5;
+                do
+                {
+                    SendHardwareTypeRequestToNode(Device.ModuleNumber, Device.GroupNumber);
+                }
+                while (!IsAnswerMessageReceived(() => ReceivedHardwareTypeResponseMessageACK) && --RetryCounter > 0);
+
+                if (RetryCounter > 0)
+                    moduleRestared = true;
+            }
+
+            if(!moduleRestared)
+                System.Windows.MessageBox.Show("Restarted module not responding");
         }
 
         void EnterProgrammingMode()
         {
-            var msg = new Messages.EnterProgrammingModeRequestToNode();
-            msg.RequestedModuleNumber = Device.ModuleNumber;
-            msg.RequestedGroupNumber = Device.GroupNumber;
-
-            HapcanManager.Connector.Send(msg);
-        }
-
-        void WaitForEnterToProgrammingMode()
-        {
-            Task t = Task.Run(() => { while (!DeviceEnteredProgrammingMode) { Thread.Sleep(1); } });
-            if (!t.Wait(5000))
-                throw new TimeoutException("Device not entered into programming mode in 5s");
-        }
-
-        bool AddressFrameACKReceived()
-        {
-            //TODO: add task cancelation 
-            Task t = Task.Run(() => { while (!ReceivedAddressFrameACKMessage) { Thread.Sleep(1); } ReceivedAddressFrameACKMessage = false; return true; });
-            if (!t.Wait(1000))
-                return false;
-
-            return true;
-        }
-
-        bool DataFrameACKReceived()
-        {
-            //TODO: add task cancelation 
-            Task t = Task.Run(() => { while (!ReceivedDataFrameACKMessage) { Thread.Sleep(1); } ReceivedDataFrameACKMessage = false; return true; });
-            if (!t.Wait(1000))
-                return false;
-
-            return true;
-        }
-
-        bool HardwareTypeResponseReceived()
-        {
-            //TODO: add task cancelation 
-            Task t = Task.Run(() => { while (!ReceivedHardwareTypeResponseMessage) { Thread.Sleep(1); } return true; });
-            if (!t.Wait(1000))
-                return false;
-
-            return true;
+            HapcanManager.Connector.Send(SentMessage = new Messages.EnterProgrammingModeRequestToNode()
+            {
+                RequestedModuleNumber = Device.ModuleNumber,
+                RequestedGroupNumber = Device.GroupNumber
+            });
         }
 
         void SendAddressFrame()
@@ -230,47 +222,6 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
 
             HapcanManager.Connector.Send(msg);
             HapcanManager.Connector.Send(msg);
-        }
-
-        public async Task PingDeviceAsync(DeviceBase device, byte extraModuleNumber = 0, byte extraGroupNumber = 0)
-        {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    Device = device;
-                    ExtraModuleNumber = extraModuleNumber;
-                    ExtraGroupNumber = extraGroupNumber;
-
-                    // in case module has changed ID, ping this new module ID
-                    if (ExtraModuleNumber != 0 && ExtraGroupNumber != 0)
-                    {
-                        PingDevice(ExtraModuleNumber, ExtraGroupNumber);
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show(e.Message);
-                }
-            });
-        }
-
-        bool PingDevice(byte moduleNumber, byte groupNumber)
-        {
-            int retryCounter = 5;
-            ReceivedHardwareTypeResponseMessage = false;
-
-            do
-            {
-                SendHardwareTypeRequestToNode(moduleNumber, groupNumber);
-                retryCounter--;
-            } while (!HardwareTypeResponseReceived() && retryCounter > 0);
-
-            if (retryCounter == 0)
-                return false;
-
-            return true;
         }
 
         void SendHardwareTypeRequestToNode(byte moduleNumber, byte groupNumber)

@@ -43,9 +43,8 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
                 do
                 {
                     SendDefaultNumberAndGroupToNode();
-                    RetryCounter--;
                 }
-                while (!IsAnswerMessageReceived(()=> ReceivedSetDefaultNodeAndGroupRequestACK) && RetryCounter > 0);
+                while (!IsAnswerMessageReceived(()=> ReceivedSetDefaultNodeAndGroupRequestACK) && --RetryCounter > 0);
 
                 if (RetryCounter == 0)
                     throw new TimeoutException("Device not responding to restore default ID message");
