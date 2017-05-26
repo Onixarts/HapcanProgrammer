@@ -49,6 +49,7 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
         internal Flows.ProgrammingFlow ProgrammingFlow { get; set; }
         internal Flows.RestoreDefaultIDFlow RestoreDefaultIDFlow { get; set; }
         internal Flows.ChangeDescriptionFlow ChangeDescriptionFlow { get; set; }
+        internal Flows.ChangeIDFlow ChangeIDFlow { get; set; }
 
         public void RebootAction(MenuItem menuItem, object context)
         {
@@ -64,22 +65,11 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
 
         public async void UpdateIDActionAsync(DeviceBase device, byte moduleNumber, byte groupNumber)
         {
-            if (moduleNumber == 0)
-                throw new ArgumentException("Module number must be greater than 0");
-
-            if (groupNumber == 0)
-                throw new ArgumentException("Group number must be greater than 0");
-
-            var programmingData = new Queue<MemoryBlock>();
-            var memoryBlock = new MemoryBlock() { Address = 0xF00020 };
-            memoryBlock.Data[6] = moduleNumber;
-            memoryBlock.Data[7] = groupNumber; 
-
-            programmingData.Enqueue(memoryBlock);
-
-            ProgrammingFlow = new Flows.ProgrammingFlow(device, programmingData, moduleNumber, groupNumber);
-
-            await ProgrammingFlow.RunAsync();
+            ChangeIDFlow = new Flows.ChangeIDFlow(device, moduleNumber, groupNumber);
+            await ChangeIDFlow.RunAsync().ContinueWith((task) =>
+            {
+                ChangeIDFlow = null;
+            });
         }
 
         public async void UpdateDescriptionAsync(DeviceBase device, string description)

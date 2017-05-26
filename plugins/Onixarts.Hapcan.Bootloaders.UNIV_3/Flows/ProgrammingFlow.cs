@@ -15,18 +15,10 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3.Flows
         {
         }
 
-        public ProgrammingFlow(DeviceBase device, Queue<MemoryBlock> programmingData, byte extraModuleNumber = 0, byte extraGroupNumber = 0)
-            : base(device)
-        {
-            ProgrammingData = programmingData;
-            ExtraModuleNumber = extraModuleNumber;
-            ExtraGroupNumber = extraGroupNumber;
-        }
-
         protected Queue<MemoryBlock> ProgrammingData { get; set; }
         private MemoryBlock CurrentMemoryBlock { get; set; }
-        byte ExtraModuleNumber { get; set; }
-        byte ExtraGroupNumber { get; set; }
+        protected byte ExtraModuleNumber { get; set; }
+        protected byte ExtraGroupNumber { get; set; }
 
         
         bool DeviceEnteredProgrammingModeACK { get; set; }

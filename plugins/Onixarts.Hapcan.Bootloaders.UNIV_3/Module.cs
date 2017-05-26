@@ -177,6 +177,9 @@ namespace Onixarts.Hapcan.Bootloaders.UNIV_3
             if (Actions.ChangeDescriptionFlow != null ? Actions.ChangeDescriptionFlow.HandleMessage(msg) : false)
                 return;
 
+            if (Actions.ChangeIDFlow != null ? Actions.ChangeIDFlow.HandleMessage(msg) : false)
+                return;
+
             if (Actions.RestoreDefaultIDFlow != null ? Actions.RestoreDefaultIDFlow.HandleMessage(msg) : false)
                 return;
         }
