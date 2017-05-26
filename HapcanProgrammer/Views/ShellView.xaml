@@ -35,6 +35,8 @@
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
 
+        <ContentControl Style="{StaticResource HeaderImage}" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" />
+        
         <ContentControl x:Name="DeviceListViewModel" Grid.Column="1" Grid.Row="2" HorizontalContentAlignment="Stretch" cal:View.Context="{Binding DeviceListViewType}" />
         
         
