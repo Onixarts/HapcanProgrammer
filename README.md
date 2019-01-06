@@ -1,4 +1,4 @@
 # HapcanProgrammer
 Hapcan Programmer redesigned
 
-WORK IN PROGRESS
+CURRENTLY DEVELOPEMENT STOPPED
